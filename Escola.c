@@ -6,9 +6,10 @@
 
 int main (void)
 {	
-    Lst_Aluno* inicio_aluno = NULL;
+    Aluno* inicio_aluno = NULL;
     int opcao;
     do {
+		system("clear");
         menu_Main(&opcao);
         switch (opcao * -1)
         {
@@ -19,13 +20,7 @@ int main (void)
           }
           case (OPCAO_MODULO_PROFESSOR):
           {
-            printf("OPCAO UTILIDADES TESTAR\n");
-            printf("entre com a string: \n");
-            int num;
-			scanf(" %d", &num);
-			char* string = int_para_string(num);
-            printf("\nString produto da conversão: %s\n\n", string);
-            break;   
+			break;
           }
           case (OPCAO_MODULO_DISCIPLINAS):
           {
@@ -35,6 +30,7 @@ int main (void)
         }
     } while (opcao != OPCAO_SAIR);
 
+	system("clear");
     return 1;
 }
 

@@ -7,10 +7,10 @@
 #define OPCAO_ALTERAR (-4)
 #define OPCAO_SAIR (0)
 
+typedef struct info_aluno Info_Aluno;
 typedef struct aluno Aluno;
-typedef struct lst_Aluno Lst_Aluno;
 
-struct aluno
+struct info_aluno
 {
   int matricula;
   char nome[50];
@@ -19,11 +19,17 @@ struct aluno
   char cpf[15];
 };
 
-struct lst_Aluno 
+struct aluno 
 {
-  Aluno aluno;
-  Lst_Aluno *prox;
+  Info_Aluno info;
+  Aluno* prox;
 };
 
-void mainAluno (Lst_Aluno **inicio_aluno, int* opcao);
+void mainAluno (Aluno** inicio_aluno, int* opcao);
 void menu_Aluno (int* opcao);
+int inserir_aluno (Aluno** inicio_aluno, Info_Aluno* nova_info_aluno);
+int cadastrar_aluno (Aluno** inicio_aluno);
+int remover_aluno_matricula (Aluno** inicio_aluno, int matricula);
+int listar_alunos (Aluno* inicio_aluno);
+int buscar_aluno_matricula (Aluno** inicio_aluno, int matricula);
+

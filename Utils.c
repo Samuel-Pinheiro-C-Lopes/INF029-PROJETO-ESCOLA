@@ -3,14 +3,13 @@
 // FUNCIONANDO
 void qnt_algarismos_int (int* qnt, int num)
 {
+	num /= 10;
+    *qnt = *qnt + 1;
+
     if (num == 0)
         return;
 
-    int novo_num;
-    novo_num = num/10;
-    *qnt = *qnt + 1;
-
-    qnt_algarismos_int (qnt, novo_num);
+    qnt_algarismos_int (qnt, num);
 }
 
 // FUNCIONANDO
@@ -19,15 +18,8 @@ char* int_para_string (int num)
 	char* string;
     int qnt = 0;
     qnt_algarismos_int(&qnt, num);
-	printf("\nQnt algatismos: %d\n", qnt);
 
-	if(qnt == 0)
-	{
-		string = (char*) malloc(2 * sizeof(char));
-		*string = 0;
-		*(string + 1) = '\0';
-	}
-	else if(num < 0)
+	if (num < 0)
 	{
 	    string = (char*) malloc((qnt + 2) * sizeof(char));
 		*string = '-';
@@ -112,3 +104,66 @@ void ler_string (char* string, int tam)
 
     ler_string(string + 1, --tam);
 }
+
+void imprimir_linhas (int num)
+{
+	if (num <= 0)
+	{
+		printf("\n");
+		return;
+	}
+
+	printf("-");
+
+	imprimir_linhas(--num);
+}
+
+void imprimir_campo (char* campo, char* valor)
+{
+	printf("%s: %s\n", campo, valor);
+}
+
+	/*
+	if (*num < 0) // número teve final negativo
+		*num -= *(string) - 48;
+    else if (*string == '-') // sinal negativo
+	{
+		string += 1;
+        *num -= *(string) - 48;
+    }
+	else // número é positivo 
+		*num += *(string) - 48;
+	*/
+
+
+/*
+	if(qnt == 0)
+	{
+		string = (char*) malloc(2 * sizeof(char));
+		*string = 0;
+		*(string + 1) = '\0';
+	}
+
+	*/
+
+/*
+
+	// sinal negativo
+	if (*string == '-')
+	{
+		string += 1;
+		//(*num) ^= (1 << (sizeof(int) * CHAR_BIT - 1)); // troca bit mais significativo do int (determina sinal)
+		*num += ((*string) - 48) * -1;
+	}
+
+	// sobe uma casa decimal para acompanhar as casas do número representado na string
+	*num *= 10;
+
+	// se número for positivo 
+	// (expressão resultará em 0 caso AND bit a bit no bit mais significativo resulte em desigualdade entre o 1 movido para a casa mais significativa de um inteiro e casa mais significativa de *num, que determina o seu sinal)
+	// soma com o equivalente numérico do char atual da string, senão, o número é negativo e deve ser subtraído pelo equivalente
+	// numérico do chaN & (1 << (sizeof(int) * CHAR_BIT - 1));r
+	*num += ((*num) & (1 << (sizeof(int) * CHAR_BIT - 1))) == 0 ? ((*string) - 48) : ((*string) - 48) * -1;	
+
+
+	*/
