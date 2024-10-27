@@ -123,6 +123,28 @@ void imprimir_campo (char* campo, char* valor)
 	printf("%s: %s\n", campo, valor);
 }
 
+void aviso_usuario (char* string)
+{
+	printf("%s\n", string);
+	printf("Entre com qualquer tecla para continuar...");
+	getchar();
+}
+
+void receber_matricula (int* num)
+{
+	printf("Entre com o número de matrícula: ");
+	scanf(" %d", num);
+	limpar();
+}
+
+void limpar (void)
+{
+	getchar();
+	system("clear");
+}
+
+
+
 	/*
 	if (*num < 0) // número teve final negativo
 		*num -= *(string) - 48;

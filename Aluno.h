@@ -23,13 +23,13 @@ struct aluno
 {
   Info_Aluno info;
   Aluno* prox;
+  Aluno* ant;
 };
 
 void mainAluno (Aluno** inicio_aluno, int* opcao);
 void menu_Aluno (int* opcao);
-int inserir_aluno (Aluno** inicio_aluno, Info_Aluno* nova_info_aluno);
+int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno);
 int cadastrar_aluno (Aluno** inicio_aluno);
 int remover_aluno_matricula (Aluno** inicio_aluno, int matricula);
-int listar_alunos (Aluno* inicio_aluno);
-int buscar_aluno_matricula (Aluno** inicio_aluno, int matricula);
-
+void listar_alunos (Aluno* inicio_aluno);
+Aluno* buscar_aluno_matricula (Aluno* inicio_aluno, int matricula);
