@@ -1,3 +1,7 @@
+#ifndef UTILS_HEADER
+#define UTILS_HEADER
+// GUARD
+
 // importações
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,17 +45,26 @@
 
 // Número de linhas para a função "imprimir_linhas"
 #define NUM_LINHAS (20)
+#define CASAS_INT_MENU (2)
+#define CASAS_INT_GERAL (5)
 
 void qnt_algarismos_int (int* qnt, int num);
 char* int_para_string (int num);
 void string_para_int (int* num, char* string);
 void multiplicacao_sucessiva (int* num, int pot, int count);
 void ler_string(char* string, int tam);
-void ler_int(int* num);
+void ler_string_f(char* string, int tam);
+void ler_int(int* int_num, int casas);
 void imprimir_linhas(int num);
 void imprimir_campo(char* campo, char* valor);
-void aviso_usuario(char* string);
+void aviso_usuario_c(char* string);
+void aviso_usuario_l(char* string);
 void receber_matricula(int* mat);
 void limpar (void);
 void flush_stdin();
 void receber_string(char* string, int tam);
+void receber_codigo (int* cod);
+void novo_identificador(int* novo, int* incrementador);
+void inicializar_incrementador (int** incrementador);
+
+#endif

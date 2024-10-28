@@ -1,5 +1,7 @@
 #include "Utils.h"
 #include "Disciplina.h"
+#include "Aluno.h"
+#include "Professor.h"
 #include "Escola.h"
 
 // projeto escola true
@@ -9,25 +11,30 @@ int main (void)
     Aluno* inicio_aluno = NULL;
 	Professor* inicio_professor = NULL;
 	Disciplina* inicio_disciplina = NULL;
+
+	int* matricula_aluno_incr = NULL; inicializar_incrementador (&matricula_aluno_incr);
+	int* matricula_professor_incr = NULL; inicializar_incrementador (&matricula_professor_incr);
+	int* codigo_disciplina_incr = NULL; inicializar_incrementador (&codigo_disciplina_incr);
+
     int opcao;
+
     do {
-		system("clear");
         menu_main(&opcao);
         switch (opcao * -1)
         {
           case (OPCAO_MODULO_ALUNO):
           {
-            main_aluno(&inicio_aluno, &opcao);
+            main_aluno(&inicio_aluno, matricula_aluno_incr, &opcao);
             break;   
           }
           case (OPCAO_MODULO_PROFESSOR):
           {
-			main_professor(&inicio_professor, &opcao);
+			main_professor(&inicio_professor, matricula_professor_incr, &opcao);
 			break;
           }
           case (OPCAO_MODULO_DISCIPLINAS):
           {
-			main_disciplina(&inicio_disciplina, &inicio_aluno, &inicio_professor, &opcao);
+			main_disciplina(&inicio_disciplina, &inicio_aluno, &inicio_professor, codigo_disciplina_incr, &opcao);
             break;   
           }
         }
@@ -44,8 +51,7 @@ int main (void)
 
 void menu_main (int* opcao)
 {
-	char str[2];
-	*opcao = 0;
+	system("clear");
 	printf("###PROJETO ESCOLA###\n\n");
 	printf("Opções:\n");
 	printf("0 - Sair\n");
@@ -53,8 +59,8 @@ void menu_main (int* opcao)
 	printf("2 - Módulo Professor\n");
 	printf("3 - Módulo Disciplinas\n");
 	printf("\nEntre com a opção desejada: ");
-	ler_string(str, sizeof(str));
-	*opcao = str[0] - 48;
+	*opcao = 0;
+	ler_int(opcao, CASAS_INT_MENU);
 }
 
 void liberar_alunos (Aluno* aluno_atual)

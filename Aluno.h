@@ -1,3 +1,6 @@
+#ifndef ALUNO_HEADER
+#define ALUNO_HEADER
+
 #include "Utils.h"
 
 typedef struct info_aluno Info_Aluno;
@@ -19,10 +22,12 @@ struct aluno
   Aluno* ant;
 };
 
-void main_aluno (Aluno** inicio_aluno, int* opcao);
+void main_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr, int* opcao);
 void menu_Aluno (int* opcao);
 int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno);
 int cadastrar_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr);
 int remover_aluno_matricula (Aluno** inicio_aluno, int matricula);
 void listar_alunos (Aluno* inicio_aluno);
 void buscar_aluno_matricula (Aluno* inicio_aluno, Aluno** aluno_alvo, int matricula);
+
+#endif

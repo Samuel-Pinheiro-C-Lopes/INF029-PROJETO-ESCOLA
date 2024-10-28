@@ -2,27 +2,27 @@
 #include "Utils.h"
 
 
-void main_professor (Professor** inicio_professor, int* opcao)
+void main_professor (Professor** inicio_professor, int* matricula_professor_incr, int* opcao)
 {
 	int mat;
 	do 
 	{
 		menu_Professor(opcao);
+		system("clear");
 		switch (*opcao * -1)
 		{
 			case (OPCAO_CADASTRAR):
 			{
-				switch (cadastrar_professor(inicio_professor))
+				switch (cadastrar_professor(inicio_professor, matricula_professor_incr))
 				{
 					case (CADASTRO_SUCESSO):
 					{
-						limpar();
-						aviso_usuario("CADASTRO REALIZADO COM SUCESSO!");
+						aviso_usuario_c("CADASTRO REALIZADO COM SUCESSO!");
 						break;
 					}
 					case (DATA_INVALIDA):
 					{
-						aviso_usuario("CADASTRO NÃO REALIZADO");
+						aviso_usuario_c("CADASTRO NÃO REALIZADO");
 						break;
 					}
 				}
@@ -32,13 +32,13 @@ void main_professor (Professor** inicio_professor, int* opcao)
 			{
 				if (*inicio_professor == NULL)
 				{
-					aviso_usuario("NÃO HÁ PROFESSORS MATRICULADOS NO MOMENTO");
+					aviso_usuario_c("NÃO HÁ PROFESSORS MATRICULADOS NO MOMENTO");
 					break;
 				}
 				else 
 				{
 					listar_professores(*inicio_professor);
-					aviso_usuario("LISTAGEM REALIZADA COM SUCESSO!");
+					aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
 				}
 				break;   
 			}
@@ -49,25 +49,25 @@ void main_professor (Professor** inicio_professor, int* opcao)
 				{
 					case (REMOCAO_SUCESSO):
 					{
-						aviso_usuario("REMOÇÃO SUCESSO");
+						aviso_usuario_c("REMOÇÃO SUCESSO");
 						break;
 					}
 					case (LISTA_VAZIA):
 					{
-						aviso_usuario("ATUALMENTE NÃO HÁ PROFESSORS PARA REMOVER");
+						aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORS PARA REMOVER");
 						break;
 					}
 					case (MATRICULA_NAO_ENCONTRADA):
 					{
-						aviso_usuario("A MATRICULA INSERIDA NÃO FOI ENCONTRADA");
+						aviso_usuario_c("A MATRICULA INSERIDA NÃO FOI ENCONTRADA");
 						break;
 					}
 				}
+				mat = 0;
 				break;
 			}
 			case (OPCAO_ALTERAR):
 			{
-				limpar();
 				break;   
 			}
 		}
@@ -77,6 +77,7 @@ void main_professor (Professor** inicio_professor, int* opcao)
 
 void menu_Professor (int* opcao)
 {
+	system("clear");
 	printf("###MÓDULO PROFESSOR###\n\n");
 	printf("Opções:\n");
 	printf("0 - Sair\n");
@@ -85,8 +86,8 @@ void menu_Professor (int* opcao)
 	printf("3 - Remover professor\n");
 	printf("4 - Listar professors\n");
 	printf("\nEntre com a opção desejada: ");
-	scanf(" %d", opcao);
-	limpar();
+	*opcao = 0;
+	ler_int(opcao, CASAS_INT_MENU);
 }
 
 int inserir_professor (Professor** inicio_professor, Info_Professor nova_info_professor)
@@ -105,11 +106,12 @@ int inserir_professor (Professor** inicio_professor, Info_Professor nova_info_pr
 	return INSERCAO_SUCESSO;
 }
 
-int cadastrar_professor (Professor** inicio_professor)
+int cadastrar_professor (Professor** inicio_professor, int* matricula_professor_incr)
 {
 	Info_Professor nova_info_professor;
 
 	imprimir_linhas(NUM_LINHAS);
+ 	novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
 	printf("\nEntre com o nome do professor: ");
 	ler_string(nova_info_professor.nome, 50);
 	printf("\nEntre com o cpf do professor: ");

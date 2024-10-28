@@ -2,13 +2,13 @@
 #include "Utils.h"
 
 
-void main_aluno (Aluno **inicio_aluno, int* opcao)
+void main_aluno (Aluno **inicio_aluno, int* matricula_aluno_incr, int* opcao)
 {
-	int* matricula_aluno_incr = (int*) malloc(sizeof(int));
 	int mat;
 	do 
 	{
 		menu_Aluno(opcao);
+		system("clear");
 		switch (*opcao * -1)
 		{
 			case (OPCAO_CADASTRAR):
@@ -17,12 +17,12 @@ void main_aluno (Aluno **inicio_aluno, int* opcao)
 				{
 					case (CADASTRO_SUCESSO):
 					{
-						aviso_usuario("CADASTRO REALIZADO COM SUCESSO!");
+						aviso_usuario_c("CADASTRO REALIZADO COM SUCESSO!");
 						break;
 					}
 					case (DATA_INVALIDA):
 					{
-						aviso_usuario("CADASTRO NÃO REALIZADO");
+						aviso_usuario_c("CADASTRO NÃO REALIZADO");
 						break;
 					}
 				}
@@ -32,13 +32,14 @@ void main_aluno (Aluno **inicio_aluno, int* opcao)
 			{
 				if (*inicio_aluno == NULL)
 				{
-					aviso_usuario("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+					aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
 					break;
 				}
 				else 
 				{
 					listar_alunos(*inicio_aluno);
-					aviso_usuario("LISTAGEM REALIZADA COM SUCESSO!");
+
+					aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
 				}
 				break;   
 			}
@@ -49,20 +50,21 @@ void main_aluno (Aluno **inicio_aluno, int* opcao)
 				{
 					case (REMOCAO_SUCESSO):
 					{
-						aviso_usuario("REMOÇÃO SUCESSO");
+						aviso_usuario_c("REMOÇÃO SUCESSO");
 						break;
 					}
 					case (LISTA_VAZIA):
 					{
-						aviso_usuario("ATUALMENTE NÃO HÁ ALUNOS PARA REMOVER");
+						aviso_usuario_c("ATUALMENTE NÃO HÁ ALUNOS PARA REMOVER");
 						break;
 					}
 					case (MATRICULA_NAO_ENCONTRADA):
 					{
-						aviso_usuario("A MATRICULA INSERIDA NÃO FOI ENCONTRADA");
+						aviso_usuario_c("A MATRICULA INSERIDA NÃO FOI ENCONTRADA");
 						break;
 					}
 				}
+				mat = 0;
 				break;
 			}
 			case (OPCAO_ALTERAR):
@@ -76,6 +78,7 @@ void main_aluno (Aluno **inicio_aluno, int* opcao)
 
 void menu_Aluno (int* opcao)
 {
+	system("clear");
 	printf("###MÓDULO ALUNO###\n\n");
 	printf("Opções:\n");
 	printf("0 - Sair\n");
@@ -84,8 +87,8 @@ void menu_Aluno (int* opcao)
 	printf("3 - Remover aluno\n");
 	printf("4 - Listar alunos\n");
 	printf("\nEntre com a opção desejada: ");
-	scanf(" %d", opcao);
-	limpar();
+	*opcao = 0;
+	ler_int(opcao, CASAS_INT_MENU);
 }
 
 int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
@@ -107,50 +110,21 @@ int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
 int cadastrar_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr)
 {
 	Info_Aluno nova_info_aluno;
-/*	size_t ln; */
 
 	imprimir_linhas(NUM_LINHAS);
-	nova_info_aluno.matricula = (++(*matricula_aluno_incr));
+	novo_identificador(&(nova_info_aluno.matricula), matricula_aluno_incr);
 
 	printf("\nEntre com o nome do aluno: ");
-	ler_string(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
-//	receber_string(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
-	/*
-	fgets(nova_info_aluno.nome, 50, stdin);
-	ln = strlen(nova_info_aluno.nome) - 1;
-	if (nova_info_aluno.nome[ln] == '\n')
-		nova_info_aluno.nome[ln] = '\0';
-	*/
+	ler_string_f(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
 
 	printf("\nEntre com a data de nascimento do aluno (Formato: [dd/mm/yyyy]): ");
-	ler_string(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
-	//receber_string(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
-	/*
-	fgets(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento), stdin);
-	ln = strlen(nova_info_aluno.data_nascimento) - 1;
-	if (nova_info_aluno.data_nascimento[ln] == '\n')
-		nova_info_aluno.data_nascimento[ln] = '\0';
-	*/
+	ler_string_f(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
 
 	printf("\nEntre com o cpf do aluno (Formato: [xxx.xxx.xxx-xx]): ");
-	ler_string(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
-//	receber_string(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
-	/*
-	fgets(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf), stdin);
-	ln = strlen(nova_info_aluno.cpf) - 1;
-	if (nova_info_aluno.cpf[ln] == '\n')
-		nova_info_aluno.cpf[ln] = '\0';
-		*/
+	ler_string_f(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
 
 	printf("\nEntre com o sexo do aluno [M ou F]: ");
-	ler_string(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
-//	receber_string(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
-	/*
-	fgets(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo), stdin);
-	ln = strlen(nova_info_aluno.sexo) - 1;
-	if (nova_info_aluno.sexo[ln] == '\n')
-		nova_info_aluno.sexo[ln] = '\0';
-		*/
+	ler_string_f(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
 
 	imprimir_linhas(NUM_LINHAS);
 

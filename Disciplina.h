@@ -1,3 +1,7 @@
+#ifndef DISCIPLINA_HEADER
+#define DISCIPLINA_HEADER
+// GUARD
+
 #include "Utils.h"
 #include "Professor.h"
 #include "Aluno.h"
@@ -32,17 +36,15 @@ struct disciplina_aluno
 	Disciplina_Aluno* ant;
 };
 
-void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Professor** inicio_professor, int* opcao);
+void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Professor** inicio_professor, int* codigo_disciplina_incr, int* opcao);
 
 void menu_disciplina (int* opcao);
 void menu_alterar (int* opcao);
 
-void receber_codigo (int* codigo);
-
 void inserir_disciplina (Disciplina** inicio_disciplina, Info_Disciplina nova_info_disciplina);
 void inserir_disciplina_aluno (Disciplina* disciplina, Aluno* aluno);
 
-int cadastrar_disciplina (Disciplina** inicio_disciplina, Professor** inicio_professor);
+int cadastrar_disciplina (Disciplina** inicio_disciplina, Professor** inicio_professor, int* codigo_disciplina_incr);
 int cadastrar_disciplina_aluno (Disciplina** inicio_disciplina, Aluno** inicio_aluno);
 
 void listar_disciplinas (Disciplina* atual_disciplina);
@@ -58,3 +60,4 @@ void buscar_disciplina_aluno_matricula (Disciplina_Aluno* atual_disciplina_aluno
 
 int validar_info_disciplina(Info_Disciplina* info_disciplina);
 
+#endif

@@ -84,6 +84,27 @@ void multiplicacao_sucessiva (int* num, int mult, int count)
   	multiplicacao_sucessiva(num, mult, count - 1);
 }
 
+void ler_string_f (char* string, int tam)
+{
+	{
+		char entrada = getchar();
+
+		if (entrada == 10)
+		{
+			*string = '\0';
+			return;
+		}
+		else if (tam > sizeof(char))
+		{
+			*string = entrada;
+			string++;
+			tam -= sizeof(char);
+		}
+	}
+
+	ler_string_f (string, tam);
+}
+
 // FUNCIONANDO
 // Itera uma quantidade de vezes para preencher uma string sem poluir o buffer
 void ler_string (char* string, int tam)
@@ -100,6 +121,7 @@ void ler_string (char* string, int tam)
 	{
     	*string = getchar(); // preenche string
 		string++; // próximo char
+		tam -= sizeof(char); // -1 char em razão do incremento
 	}
 
 	if (*(string - 1) == 10) // se o char preenchido foi 'enter'
@@ -108,14 +130,34 @@ void ler_string (char* string, int tam)
 		return; // fim recursividade
 	}
 
-	tam -= sizeof(char); // -1 char em qualquer um dos casos
     ler_string(string, tam); // próximo da cadeia do ponteiro
 }
 
-void ler_int (int* num)
+void ler_int (int* int_num, int casas)
 {
-	scanf(" %d", num);
-	while ((getchar()) != '\n');
+	if (casas <= 0)
+	{
+		if((getchar()) == 10)
+		{
+			return;
+		}
+	}
+	else
+	{
+		{
+			int temp = (getchar()) - 48;
+			if (temp == -38)
+				return;
+			else
+			{
+				*int_num *= 10;
+				*int_num += temp;
+				casas--;
+			}
+		}
+	}
+
+	ler_int (int_num, casas);
 }
 
 void imprimir_linhas (int num)
@@ -136,41 +178,42 @@ void imprimir_campo (char* campo, char* valor)
 	printf("%s: %s\n", campo, valor);
 }
 
-void aviso_usuario (char* string)
+void aviso_usuario_l (char* string)
 {
 	printf("%s\n", string);
 	printf("Entre com qualquer tecla para continuar...");
 	getchar();
 }
 
-void receber_matricula (int* num)
+void aviso_usuario_c (char* string)
+{
+	system("clear");
+	printf("%s\n", string);
+	printf("Entre com qualquer tecla para continuar...");
+	getchar();
+}
+
+void receber_matricula (int* mat)
 {
 	printf("Entre com o número de matrícula: ");
-	scanf(" %d", num);
-	limpar();
+	ler_int(mat, CASAS_INT_GERAL);
 }
 
-void limpar (void)
+void receber_codigo (int* cod)
 {
-	while (getchar() != '\n');
-	system("clear");
+	printf("Entre com o código da disciplina: ");
+	ler_int(cod, CASAS_INT_GERAL);
 }
 
-
-void flush_stdin ()
+void novo_identificador (int* novo, int* incrementador)
 {
-	int c = 'a';
-	ungetc(c, stdin);
-	while ((c = getchar()) != '\n' && c != EOF);
+	*novo = (++(*incrementador));
 }
 
-void receber_string (char* string, int tam)
+void inicializar_incrementador (int** identificador)
 {
-	size_t ln;
-	fgets(string, tam, stdin);
-	ln = strlen(string) - 1;
-	if (*(string + ln) == '\n')
-		*(string + ln) = '\0';
+	*identificador = (int*) malloc(sizeof(int));
+	*(*identificador) = 0;
 }
 
 	/*
