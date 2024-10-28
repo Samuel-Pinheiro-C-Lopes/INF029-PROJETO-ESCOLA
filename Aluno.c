@@ -2,22 +2,21 @@
 #include "Utils.h"
 
 
-void mainAluno (Aluno **inicio_aluno, int* opcao)
+void main_aluno (Aluno **inicio_aluno, int* opcao)
 {
+	int* matricula_aluno_incr = (int*) malloc(sizeof(int));
 	int mat;
 	do 
 	{
-		system("clear");
 		menu_Aluno(opcao);
 		switch (*opcao * -1)
 		{
 			case (OPCAO_CADASTRAR):
 			{
-				switch (cadastrar_aluno(inicio_aluno))
+				switch (cadastrar_aluno(inicio_aluno, matricula_aluno_incr))
 				{
 					case (CADASTRO_SUCESSO):
 					{
-						limpar();
 						aviso_usuario("CADASTRO REALIZADO COM SUCESSO!");
 						break;
 					}
@@ -68,7 +67,6 @@ void mainAluno (Aluno **inicio_aluno, int* opcao)
 			}
 			case (OPCAO_ALTERAR):
 			{
-				limpar();
 				break;   
 			}
 		}
@@ -82,9 +80,9 @@ void menu_Aluno (int* opcao)
 	printf("Opções:\n");
 	printf("0 - Sair\n");
 	printf("1 - Cadastrar aluno\n");
-	printf("2 - Listar alunos\n");
+	printf("2 - Alterar aluno\n");
 	printf("3 - Remover aluno\n");
-	printf("4 - Alterar aluno\n");
+	printf("4 - Listar alunos\n");
 	printf("\nEntre com a opção desejada: ");
 	scanf(" %d", opcao);
 	limpar();
@@ -106,17 +104,54 @@ int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
 	return INSERCAO_SUCESSO;
 }
 
-int cadastrar_aluno (Aluno** inicio_aluno)
+int cadastrar_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr)
 {
 	Info_Aluno nova_info_aluno;
+/*	size_t ln; */
 
 	imprimir_linhas(NUM_LINHAS);
+	nova_info_aluno.matricula = (++(*matricula_aluno_incr));
+
 	printf("\nEntre com o nome do aluno: ");
-	ler_string(nova_info_aluno.nome, 50);
-	printf("\nEntre com a matricula do aluno: ");
-	scanf(" %d", &nova_info_aluno.matricula);
+	ler_string(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
+//	receber_string(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
+	/*
+	fgets(nova_info_aluno.nome, 50, stdin);
+	ln = strlen(nova_info_aluno.nome) - 1;
+	if (nova_info_aluno.nome[ln] == '\n')
+		nova_info_aluno.nome[ln] = '\0';
+	*/
+
+	printf("\nEntre com a data de nascimento do aluno (Formato: [dd/mm/yyyy]): ");
+	ler_string(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
+	//receber_string(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
+	/*
+	fgets(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento), stdin);
+	ln = strlen(nova_info_aluno.data_nascimento) - 1;
+	if (nova_info_aluno.data_nascimento[ln] == '\n')
+		nova_info_aluno.data_nascimento[ln] = '\0';
+	*/
+
+	printf("\nEntre com o cpf do aluno (Formato: [xxx.xxx.xxx-xx]): ");
+	ler_string(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
+//	receber_string(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
+	/*
+	fgets(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf), stdin);
+	ln = strlen(nova_info_aluno.cpf) - 1;
+	if (nova_info_aluno.cpf[ln] == '\n')
+		nova_info_aluno.cpf[ln] = '\0';
+		*/
+
 	printf("\nEntre com o sexo do aluno [M ou F]: ");
-	scanf(" %c", &nova_info_aluno.sexo);
+	ler_string(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
+//	receber_string(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
+	/*
+	fgets(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo), stdin);
+	ln = strlen(nova_info_aluno.sexo) - 1;
+	if (nova_info_aluno.sexo[ln] == '\n')
+		nova_info_aluno.sexo[ln] = '\0';
+		*/
+
 	imprimir_linhas(NUM_LINHAS);
 
 	if (inserir_aluno (inicio_aluno, nova_info_aluno) == INSERCAO_SUCESSO)	
@@ -133,7 +168,9 @@ void listar_alunos (Aluno* atual_aluno)
 	imprimir_linhas(NUM_LINHAS);
 	imprimir_campo("Matrícula", int_para_string(atual_aluno->info.matricula));
 	imprimir_campo("Nome", atual_aluno->info.nome);
-	imprimir_campo("Sexo", &atual_aluno->info.sexo);
+	imprimir_campo("Sexo", atual_aluno->info.sexo);
+	imprimir_campo("Cpf", atual_aluno->info.cpf);
+	imprimir_campo("Data de Nascimento", atual_aluno->info.data_nascimento);
 	imprimir_linhas(NUM_LINHAS);
 
 	printf("\n");
@@ -146,7 +183,9 @@ int remover_aluno_matricula (Aluno** inicio_aluno, int matricula)
 	if (inicio_aluno == NULL)
 		return LISTA_VAZIA;
 		
-	Aluno* aluno_alvo = buscar_aluno_matricula((*inicio_aluno), matricula);
+	Aluno* aluno_alvo = NULL;
+
+	buscar_aluno_matricula((*inicio_aluno), &aluno_alvo, matricula);
 
 	if (aluno_alvo == NULL)
 		return MATRICULA_NAO_ENCONTRADA;
@@ -164,18 +203,17 @@ int remover_aluno_matricula (Aluno** inicio_aluno, int matricula)
 	return REMOCAO_SUCESSO;
 }
 
-Aluno* buscar_aluno_matricula (Aluno* atual_aluno, int matricula)
+void buscar_aluno_matricula (Aluno* atual_aluno, Aluno** aluno_alvo, int matricula)
 {
 	if (atual_aluno == NULL)
-		return NULL;
+		return;
 
 	if (atual_aluno->info.matricula == matricula)
-		return atual_aluno;
+		*aluno_alvo = atual_aluno;
 
-	buscar_aluno_matricula(atual_aluno->prox, matricula);
-
-	return NULL;
+	buscar_aluno_matricula(atual_aluno->prox, aluno_alvo, matricula);
 }
+
 /* CONTINUAR
 int remover_aluno_matricula (Aluno** inicio_aluno, int matricula)
 {

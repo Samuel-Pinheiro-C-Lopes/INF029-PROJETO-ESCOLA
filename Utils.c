@@ -54,7 +54,7 @@ char* int_para_string (int num)
 void string_para_int (int* num, char* string)
 {
     // caso string esteja no final
-    if (*string == '\0')
+    if (*string < 48 || *string > 57)
 		return;
 
 	*num *= 10;
@@ -85,24 +85,37 @@ void multiplicacao_sucessiva (int* num, int mult, int count)
 }
 
 // FUNCIONANDO
-// Itera uma quantidade de vezes para preencher uma string
+// Itera uma quantidade de vezes para preencher uma string sem poluir o buffer
 void ler_string (char* string, int tam)
 {
-    if (tam <= 1)
-    {
-        *string = '\0';
-        return;
-    }
+   	if (tam <= sizeof(char)) // caso tenha excedido o tamanho
+	{
+		if((getchar()) == 10) // descarta poluição do buffer stdin até encontrar 'enter'
+		{
+			*string = '\0'; // terminador nulo
+			return; // fim recursividade
+		}
+	}
+	else 
+	{
+    	*string = getchar(); // preenche string
+		string++; // próximo char
+	}
 
-    *string = getchar();
+	if (*(string - 1) == 10) // se o char preenchido foi 'enter'
+	{
+		*(string - 1) = '\0'; // terminador nulo
+		return; // fim recursividade
+	}
 
-    if (*string == 10)
-    {
-        *string = '\0';
-        return;
-    }
+	tam -= sizeof(char); // -1 char em qualquer um dos casos
+    ler_string(string, tam); // próximo da cadeia do ponteiro
+}
 
-    ler_string(string + 1, --tam);
+void ler_int (int* num)
+{
+	scanf(" %d", num);
+	while ((getchar()) != '\n');
 }
 
 void imprimir_linhas (int num)
@@ -139,11 +152,26 @@ void receber_matricula (int* num)
 
 void limpar (void)
 {
-	getchar();
+	while (getchar() != '\n');
 	system("clear");
 }
 
 
+void flush_stdin ()
+{
+	int c = 'a';
+	ungetc(c, stdin);
+	while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void receber_string (char* string, int tam)
+{
+	size_t ln;
+	fgets(string, tam, stdin);
+	ln = strlen(string) - 1;
+	if (*(string + ln) == '\n')
+		*(string + ln) = '\0';
+}
 
 	/*
 	if (*num < 0) // número teve final negativo

@@ -4,6 +4,13 @@
 #include <string.h>
 #include <limits.h>
 
+// Definições de opções para menu
+#define OPCAO_CADASTRAR (-1)
+#define OPCAO_ALTERAR (-2)
+#define OPCAO_REMOVER (-3)
+#define OPCAO_LISTAR (-4)
+#define OPCAO_SAIR (0)
+
 // Definições erro falha ou incongruência
 #define MATRICULA_NAO_ENCONTRADA (-11)
 #define CODIGO_NAO_ENCONTRADO (-12)
@@ -40,8 +47,11 @@ char* int_para_string (int num);
 void string_para_int (int* num, char* string);
 void multiplicacao_sucessiva (int* num, int pot, int count);
 void ler_string(char* string, int tam);
+void ler_int(int* num);
 void imprimir_linhas(int num);
 void imprimir_campo(char* campo, char* valor);
 void aviso_usuario(char* string);
 void receber_matricula(int* mat);
 void limpar (void);
+void flush_stdin();
+void receber_string(char* string, int tam);

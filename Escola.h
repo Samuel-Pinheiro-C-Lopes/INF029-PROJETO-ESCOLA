@@ -6,4 +6,8 @@
 #define OPCAO_MODULO_DISCIPLINAS (-3)
 #define OPCAO_SAIR (0)
 
-void menu_Main (int* opcao);
+void menu_main (int* opcao);
+
+void liberar_alunos (Aluno* aluno_atual);
+void liberar_professores (Professor* professor_atual);
+void liberar_disciplinas (Disciplina* disciplina_atual);

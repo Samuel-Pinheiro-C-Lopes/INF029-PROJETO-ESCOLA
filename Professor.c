@@ -2,12 +2,11 @@
 #include "Utils.h"
 
 
-void mainProfessor (Professor **inicio_professor, int* opcao)
+void main_professor (Professor** inicio_professor, int* opcao)
 {
 	int mat;
 	do 
 	{
-		system("clear");
 		menu_Professor(opcao);
 		switch (*opcao * -1)
 		{
@@ -82,9 +81,9 @@ void menu_Professor (int* opcao)
 	printf("Opções:\n");
 	printf("0 - Sair\n");
 	printf("1 - Cadastrar professor\n");
-	printf("2 - Listar professors\n");
+	printf("2 - Alterar professor\n");
 	printf("3 - Remover professor\n");
-	printf("4 - Alterar professor\n");
+	printf("4 - Listar professors\n");
 	printf("\nEntre com a opção desejada: ");
 	scanf(" %d", opcao);
 	limpar();
@@ -113,10 +112,12 @@ int cadastrar_professor (Professor** inicio_professor)
 	imprimir_linhas(NUM_LINHAS);
 	printf("\nEntre com o nome do professor: ");
 	ler_string(nova_info_professor.nome, 50);
-	printf("\nEntre com a matricula do professor: ");
-	scanf(" %d", &nova_info_professor.matricula);
+	printf("\nEntre com o cpf do professor: ");
+	ler_string(nova_info_professor.cpf, 15);
+	printf("\nEntre com a data de nascimento do professor: ");
+	ler_string(nova_info_professor.data_nascimento, 11);
 	printf("\nEntre com o sexo do professor [M ou F]: ");
-	scanf(" %c", &nova_info_professor.sexo);
+	ler_string(nova_info_professor.sexo, 2);
 	imprimir_linhas(NUM_LINHAS);
 
 	if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
@@ -133,7 +134,9 @@ void listar_professores (Professor* atual_professor)
 	imprimir_linhas(NUM_LINHAS);
 	imprimir_campo("Matrícula", int_para_string(atual_professor->info.matricula));
 	imprimir_campo("Nome", atual_professor->info.nome);
-	imprimir_campo("Sexo", &atual_professor->info.sexo);
+	imprimir_campo("CPF", atual_professor->info.cpf);
+	imprimir_campo("Data de Nascimento", atual_professor->info.data_nascimento);
+	imprimir_campo("Sexo", atual_professor->info.sexo);
 	imprimir_linhas(NUM_LINHAS);
 
 	printf("\n");
@@ -146,7 +149,9 @@ int remover_professor_matricula (Professor** inicio_professor, int matricula)
 	if (inicio_professor == NULL)
 		return LISTA_VAZIA;
 		
-	Professor* professor_alvo = buscar_professor_matricula((*inicio_professor), matricula);
+	Professor* professor_alvo = NULL;  
+
+	buscar_professor_matricula((*inicio_professor), &professor_alvo, matricula);
 
 	if (professor_alvo == NULL)
 		return MATRICULA_NAO_ENCONTRADA;
@@ -164,16 +169,14 @@ int remover_professor_matricula (Professor** inicio_professor, int matricula)
 	return REMOCAO_SUCESSO;
 }
 
-Professor* buscar_professor_matricula (Professor* atual_professor, int matricula)
+void buscar_professor_matricula (Professor* atual_professor, Professor** professor_alvo, int matricula)
 {
 	if (atual_professor == NULL)
-		return NULL;
+		return;
 
 	if (atual_professor->info.matricula == matricula)
-		return atual_professor;
+		*professor_alvo = atual_professor;
 
-	buscar_professor_matricula(atual_professor->prox, matricula);
-
-	return NULL;
+	buscar_professor_matricula(atual_professor->prox, professor_alvo, matricula);
 }
 

@@ -12,22 +12,22 @@ int main (void)
     int opcao;
     do {
 		system("clear");
-        menu_Main(&opcao);
+        menu_main(&opcao);
         switch (opcao * -1)
         {
           case (OPCAO_MODULO_ALUNO):
           {
-            mainAluno(&inicio_aluno, &opcao);
+            main_aluno(&inicio_aluno, &opcao);
             break;   
           }
           case (OPCAO_MODULO_PROFESSOR):
           {
-			mainProfessor(&inicio_professor, &opcao);
+			main_professor(&inicio_professor, &opcao);
 			break;
           }
           case (OPCAO_MODULO_DISCIPLINAS):
           {
-			mainDisciplina(&inicio_disciplina, &inicio_aluno, &inicio_professor, &opcao);
+			main_disciplina(&inicio_disciplina, &inicio_aluno, &inicio_professor, &opcao);
             break;   
           }
         }
@@ -35,11 +35,17 @@ int main (void)
 
 	system("clear");
 
+	liberar_alunos(inicio_aluno);
+	liberar_professores(inicio_professor);
+	liberar_disciplinas(inicio_disciplina);
+
     return 1;
 }
 
-void menu_Main (int* opcao)
+void menu_main (int* opcao)
 {
+	char str[2];
+	*opcao = 0;
 	printf("###PROJETO ESCOLA###\n\n");
 	printf("Opções:\n");
 	printf("0 - Sair\n");
@@ -47,6 +53,36 @@ void menu_Main (int* opcao)
 	printf("2 - Módulo Professor\n");
 	printf("3 - Módulo Disciplinas\n");
 	printf("\nEntre com a opção desejada: ");
-	scanf(" %d", opcao);
-	limpar();
+	ler_string(str, sizeof(str));
+	*opcao = str[0] - 48;
+}
+
+void liberar_alunos (Aluno* aluno_atual)
+{
+	if (aluno_atual == NULL)
+		return;
+
+	liberar_alunos (aluno_atual->prox);
+
+	free(aluno_atual);
+}
+
+void liberar_professores (Professor* professor_atual)
+{
+	if (professor_atual == NULL)
+		return;
+
+	liberar_professores (professor_atual->prox);
+
+	free(professor_atual);
+}
+
+void liberar_disciplinas (Disciplina* disciplina_atual)
+{
+	if (disciplina_atual == NULL)
+		return;
+
+	liberar_disciplinas (disciplina_atual->prox);
+
+	free(disciplina_atual);
 }
