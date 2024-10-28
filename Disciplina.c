@@ -15,6 +15,7 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 		system("clear");
 		switch (*opcao * -1)
 		{
+			// CADASTRAR DISCIPLINA
 			case (OPCAO_CADASTRAR):
 			{
 				retorno = cadastrar_disciplina(inicio_disciplina, inicio_professor, codigo_disciplina_incr);
@@ -38,6 +39,7 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 				}
 			break;   
 			}
+			// ALTERAR DISCIPLINA
 			case (OPCAO_ALTERAR):
 			{
 				do
@@ -47,15 +49,14 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 					{
 						receber_codigo(&cod);
 						buscar_disciplina_codigo(*inicio_disciplina, &disciplina_alvo_menu, cod);
-						cod = 0;
 					}
 
 					switch (*opcao * -1)
 					{
+						// CADASTRAR ALUNO EM DISCIPLINA
 						case (OPCAO_CADASTRAR):
 						{
-							retorno = cadastrar_disciplina_aluno(inicio_disciplina, inicio_aluno);
-							switch (retorno)
+							switch (cadastrar_disciplina_aluno(inicio_disciplina, inicio_aluno))
 							{
 								case (MATRICULA_NAO_ENCONTRADA):
 								{
@@ -73,11 +74,33 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 									break;
 								}
 							}
-						}
-						case (OPCAO_ALTERAR):
-						{
 							break;
 						}
+						// ALTERAR DADOS DE UMA DISCIPLINA
+						case (OPCAO_ALTERAR):
+						{
+							switch(alterar_disciplina_matricula(inicio_disciplina, inicio_professor, cod))
+							{
+								case (ALTERACAO_SUCESSO):
+								{
+									aviso_usuario_c("ALTERÇÃO SUCESSO!");
+									break;
+								}
+
+								case (MATRICULA_NAO_ENCONTRADA):
+								{
+									aviso_usuario_c("A MATRÍCULA INSERIDA NÃO FOI ENCONTRADA");
+									break;
+								}
+								case (LISTA_VAZIA):
+								{
+									aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORES PARA ALTERAR");
+									break;
+								}
+							}
+							break;
+						}
+						// REMOVER ALUNO CADASTRADO EM UMA DISCIPLINA
 						case (OPCAO_REMOVER):
 						{
 							receber_matricula(&mat);
@@ -99,7 +122,6 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 									break;
 								}
 							}
-							mat = 0;
 						}
 					}
 				} while (*opcao != OPCAO_SAIR);
@@ -107,6 +129,7 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 				*opcao = 1;
 				break;   
 			}
+			// REMOVER UMA DISCIPLINA
 			case (OPCAO_REMOVER):
 			{
  				receber_codigo(&cod);
@@ -128,9 +151,9 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						break;
 					}
 				}
-				cod = 0;
 				break;
 			}
+			// LISTAR AS DISCIPLINAS
 			case (OPCAO_LISTAR):
 			{
 				if (*inicio_disciplina == NULL)
@@ -145,6 +168,7 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 				}
 				break;   
 			}
+			// DETALHAR UMA DISCIPLINA (mostra alunos)
 			case (DETALHAR_DISCIPLINA):
 			{
 				receber_codigo(&cod);
@@ -162,7 +186,6 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
 					}
 				}
-				cod = 0;
 				break;	
 			}
 		}
@@ -182,8 +205,7 @@ void menu_disciplina (int* opcao)
 	printf("4 - Listar disciplinas\n");
 	printf("5 - Detalhar disciplina\n");
 	printf("\nEntre com a opção desejada: ");
-	*opcao = 0;
-	ler_int(opcao, CASAS_INT_MENU);
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
 }
 
 void menu_alterar (int* opcao)
@@ -196,8 +218,7 @@ void menu_alterar (int* opcao)
 	printf("3 - Remover cadastro de aluno de uma disciplina\n");
 	printf("0 - Sair\n");
 	printf("\nEntre com a opção desejada: ");
-	*opcao = 0;
-	ler_int(opcao, CASAS_INT_MENU);
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
 }
 
 void inserir_disciplina (Disciplina** inicio_disciplina, Info_Disciplina nova_info_disciplina)
@@ -235,20 +256,21 @@ int cadastrar_disciplina (Disciplina** inicio_disciplina, Professor** inicio_pro
 	int validade_info_disciplina;
 
 	imprimir_linhas(NUM_LINHAS);
-	novo_identificador(&(nova_info_disciplina.codigo), codigo_disciplina_incr);  
 	printf("\nEntre com o nome do disciplina: ");
-	ler_string(nova_info_disciplina.nome, 50);
+	ler_string_f(nova_info_disciplina.nome, 50);
 	printf("\nEntre com a matrícula do professor da disciplina: ");
-	ler_int(&mat, CASAS_INT_GERAL);
+	ext_ler_int_f(&mat, CASAS_INT_GERAL);
+	nova_info_disciplina.professor = NULL;
  	buscar_professor_matricula(*inicio_professor, &(nova_info_disciplina.professor), mat);
 	printf("\nEntre com o semestre da disciplina: ");
-	ler_int(&nova_info_disciplina.semestre, CASAS_INT_GERAL);
+	ext_ler_int_f(&nova_info_disciplina.semestre, CASAS_INT_GERAL);
 	imprimir_linhas(NUM_LINHAS);
 
 	validade_info_disciplina = validar_info_disciplina(&nova_info_disciplina);
 
 	if (validade_info_disciplina == DISCIPLINA_VALIDA)
 	{
+		novo_identificador(&(nova_info_disciplina.codigo), codigo_disciplina_incr);  
 		nova_info_disciplina.disciplina_aluno = NULL;
 		inserir_disciplina(inicio_disciplina, nova_info_disciplina);
 		return CADASTRO_SUCESSO;
@@ -268,9 +290,9 @@ int cadastrar_disciplina_aluno (Disciplina** inicio_disciplina, Aluno** inicio_a
 
 	imprimir_linhas(NUM_LINHAS);
 	printf("\nEntre com o código da disciplina o qual você quer cadastrar um aluno: ");
-	ler_int(&cod, CASAS_INT_GERAL);
+	ext_ler_int_f(&cod, CASAS_INT_GERAL);
 	printf("\nEntre com a matrícula do aluno que deseja cadastrar na disciplina: ");
-	ler_int(&mat, CASAS_INT_GERAL);
+	ext_ler_int_f(&mat, CASAS_INT_GERAL);
 	imprimir_linhas(NUM_LINHAS);
 
 	buscar_aluno_matricula(*inicio_aluno, &aluno, mat);
@@ -421,4 +443,100 @@ void buscar_disciplina_aluno_matricula (Disciplina_Aluno* atual_disciplina_aluno
 		*disciplina_aluno_alvo = atual_disciplina_aluno;
 
 	buscar_disciplina_aluno_matricula(atual_disciplina_aluno->prox, disciplina_aluno_alvo, matricula);
+}
+
+int alterar_disciplina_matricula (Disciplina** inicio_disciplina, Professor** inicio_professor, int codigo)
+{
+	if (*inicio_disciplina == NULL)
+		return LISTA_VAZIA;
+		
+	Disciplina* disciplina_alvo = NULL;
+	buscar_disciplina_codigo((*inicio_disciplina), &disciplina_alvo, codigo);
+
+
+	if (disciplina_alvo == NULL)
+		return MATRICULA_NAO_ENCONTRADA;
+	else
+	{
+		int opcao;
+
+		mostrar_disciplina(disciplina_alvo);
+		
+		imprimir_linhas(NUM_LINHAS);
+
+		mudar_campo_str(disciplina_alvo->info.nome, "nome", sizeof(disciplina_alvo->info.nome), &opcao);
+
+		int retorno;
+		do
+		{
+			retorno = mudar_disciplina_professor(disciplina_alvo, inicio_professor, &opcao);
+			
+			switch (retorno)
+			{
+				case (LISTA_VAZIA):
+				{
+					aviso_usuario_l("NÃO HÁ PROFESSORES MATRICULADOS NO MOMENTO");
+					break;
+				}
+				case (MATRICULA_NAO_ENCONTRADA):
+				{
+					aviso_usuario_l("NÃO HÁ PROFESSOR COM A MATRÍCULA INSERIDA");
+					break;
+				}
+				case (ALTERACAO_SUCESSO):
+				{
+					aviso_usuario_l("PROFESSOR ALTERADO COM SUCESSO!");
+					break;
+				}
+
+			}
+		} while (retorno != OPCAO_SAIR && retorno != ALTERACAO_SUCESSO);
+
+		mudar_campo_int(&(disciplina_alvo->info.semestre), "semestre", CASAS_INT_GERAL, &opcao);
+	
+		return ALTERACAO_SUCESSO;
+	}
+}
+
+int mudar_disciplina_professor (Disciplina* disciplina, Professor** inicio_professor, int* opcao)
+{
+	do
+	{
+		printf("\nMudar o professor?\n[1 para sim; 0 para não]: ");	
+		ext_ler_int_f(opcao, CASAS_INT_MENU);
+		if (*opcao == 0)
+			return OPCAO_SAIR;
+		system("clear");
+	} while (*opcao != 1);
+
+	int mat;
+
+	if (inicio_professor == NULL)
+		return LISTA_VAZIA;
+
+	Professor* professor_alvo = NULL;
+	printf("Entre com a matrícula do novo professor: ");
+	ext_ler_int_f(&mat, CASAS_INT_GERAL);
+
+	buscar_professor_matricula(*inicio_professor, &professor_alvo, mat);
+
+	if (professor_alvo == NULL)
+		return MATRICULA_NAO_ENCONTRADA;
+
+	disciplina->info.professor = professor_alvo;
+
+	return ALTERACAO_SUCESSO;
+}
+
+void mostrar_disciplina (Disciplina* disciplina_alvo)
+{	
+
+	imprimir_linhas(NUM_LINHAS);
+	imprimir_campo("Código", int_para_string(disciplina_alvo->info.codigo));
+	imprimir_campo("Nome", disciplina_alvo->info.nome);
+	imprimir_campo("Professor", disciplina_alvo->info.professor->info.nome);
+	imprimir_campo("Semestre", int_para_string(disciplina_alvo->info.semestre));
+	imprimir_linhas(NUM_LINHAS);
+
+	printf("\n");
 }

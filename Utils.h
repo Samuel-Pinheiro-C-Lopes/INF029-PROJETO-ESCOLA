@@ -39,6 +39,7 @@
 #define CADASTRO_SUCESSO (-66)
 #define INSERCAO_SUCESSO (-67)
 #define LISTAGEM_SUCESSO (-68)
+#define ALTERACAO_SUCESSO (-69)
 
 // Definições de fracasso
 #define CADASTRO_FRACASSO (-70)
@@ -48,6 +49,9 @@
 #define CASAS_INT_MENU (2)
 #define CASAS_INT_GERAL (5)
 
+// Macros
+#define CHAR_NUMERO (CHAR) ((CHAR >= 48) && (CHAR <= 57))
+
 void qnt_algarismos_int (int* qnt, int num);
 char* int_para_string (int num);
 void string_para_int (int* num, char* string);
@@ -55,8 +59,12 @@ void multiplicacao_sucessiva (int* num, int pot, int count);
 void ler_string(char* string, int tam);
 void ler_string_f(char* string, int tam);
 void ler_int(int* int_num, int casas);
+void ler_int_f(int* int_num, int casas);
+void ext_ler_int_f(int* int_num, int casas);
 void imprimir_linhas(int num);
 void imprimir_campo(char* campo, char* valor);
+void mudar_campo_str(char* campo, char* mensagem, int tamanho_campo, int* opcao);
+void mudar_campo_int(int* campo, char* mensagem, int casas_campo, int* opcao);
 void aviso_usuario_c(char* string);
 void aviso_usuario_l(char* string);
 void receber_matricula(int* mat);

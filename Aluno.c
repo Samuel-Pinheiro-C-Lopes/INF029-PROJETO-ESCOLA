@@ -64,11 +64,30 @@ void main_aluno (Aluno **inicio_aluno, int* matricula_aluno_incr, int* opcao)
 						break;
 					}
 				}
-				mat = 0;
 				break;
 			}
 			case (OPCAO_ALTERAR):
 			{
+				receber_matricula(&mat);
+				switch(alterar_aluno_matricula(inicio_aluno, mat))
+				{
+					case (ALTERACAO_SUCESSO):
+					{
+						aviso_usuario_c("ALTERÇÃO SUCESSO!");
+						break;
+					}
+
+					case (MATRICULA_NAO_ENCONTRADA):
+					{
+						aviso_usuario_c("A MATRÍCULA INSERIDA NÃO FOI ENCONTRADA");
+						break;
+					}
+					case (LISTA_VAZIA):
+					{
+						aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORES PARA ALTERAR");
+						break;
+					}
+				}
 				break;   
 			}
 		}
@@ -87,8 +106,7 @@ void menu_Aluno (int* opcao)
 	printf("3 - Remover aluno\n");
 	printf("4 - Listar alunos\n");
 	printf("\nEntre com a opção desejada: ");
-	*opcao = 0;
-	ler_int(opcao, CASAS_INT_MENU);
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
 }
 
 int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
@@ -186,6 +204,48 @@ void buscar_aluno_matricula (Aluno* atual_aluno, Aluno** aluno_alvo, int matricu
 		*aluno_alvo = atual_aluno;
 
 	buscar_aluno_matricula(atual_aluno->prox, aluno_alvo, matricula);
+}
+
+int alterar_aluno_matricula (Aluno** inicio_aluno, int matricula)
+{
+	if (*inicio_aluno == NULL)
+		return LISTA_VAZIA;
+		
+	Aluno* aluno_alvo = NULL;
+	buscar_aluno_matricula((*inicio_aluno), &aluno_alvo, matricula);
+
+
+	if (aluno_alvo == NULL)
+		return MATRICULA_NAO_ENCONTRADA;
+	else
+	{
+		int opcao;
+
+		mostrar_aluno(aluno_alvo);
+		
+		imprimir_linhas(NUM_LINHAS);
+
+		mudar_campo_str(aluno_alvo->info.nome, "nome", sizeof(aluno_alvo->info.nome), &opcao);
+		mudar_campo_str(aluno_alvo->info.cpf, "cpf", sizeof(aluno_alvo->info.cpf), &opcao);
+		mudar_campo_str(aluno_alvo->info.data_nascimento, "data de nascimento", sizeof(aluno_alvo->info.data_nascimento), &opcao);
+		mudar_campo_str(aluno_alvo->info.sexo, "sexo", sizeof(aluno_alvo->info.sexo), &opcao);
+
+		return ALTERACAO_SUCESSO;
+	}
+}
+
+void mostrar_aluno (Aluno* aluno_alvo)
+{	
+
+	imprimir_linhas(NUM_LINHAS);
+	imprimir_campo("Matrícula", int_para_string(aluno_alvo->info.matricula));
+	imprimir_campo("Nome", aluno_alvo->info.nome);
+	imprimir_campo("CPF", aluno_alvo->info.cpf);
+	imprimir_campo("Data de Nascimento", aluno_alvo->info.data_nascimento);
+	imprimir_campo("Sexo", aluno_alvo->info.sexo);
+	imprimir_linhas(NUM_LINHAS);
+
+	printf("\n");
 }
 
 /* CONTINUAR

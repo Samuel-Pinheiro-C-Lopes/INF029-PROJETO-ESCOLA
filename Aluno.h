@@ -28,6 +28,9 @@ int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno);
 int cadastrar_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr);
 int remover_aluno_matricula (Aluno** inicio_aluno, int matricula);
 void listar_alunos (Aluno* inicio_aluno);
-void buscar_aluno_matricula (Aluno* inicio_aluno, Aluno** aluno_alvo, int matricula);
+void buscar_aluno_matricula (Aluno* atual_aluno, Aluno** aluno_alvo, int matricula);
+int alterar_aluno_matricula(Aluno** inicio_aluno, int matricula);
+void mostrar_aluno(Aluno* aluno_alvo);
+
 
 #endif

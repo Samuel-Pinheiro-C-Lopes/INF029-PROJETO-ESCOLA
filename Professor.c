@@ -54,7 +54,7 @@ void main_professor (Professor** inicio_professor, int* matricula_professor_incr
 					}
 					case (LISTA_VAZIA):
 					{
-						aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORS PARA REMOVER");
+						aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORES PARA REMOVER");
 						break;
 					}
 					case (MATRICULA_NAO_ENCONTRADA):
@@ -63,11 +63,30 @@ void main_professor (Professor** inicio_professor, int* matricula_professor_incr
 						break;
 					}
 				}
-				mat = 0;
 				break;
 			}
 			case (OPCAO_ALTERAR):
 			{
+				receber_matricula(&mat);
+				switch (alterar_professor_matricula(inicio_professor, mat))
+				{
+					case (ALTERACAO_SUCESSO):
+					{
+						aviso_usuario_c("ALTERÇÃO SUCESSO!");
+						break;
+					}
+
+					case (MATRICULA_NAO_ENCONTRADA):
+					{
+						aviso_usuario_c("A MATRÍCULA INSERIDA NÃO FOI ENCONTRADA");
+						break;
+					}
+					case (LISTA_VAZIA):
+					{
+						aviso_usuario_c("ATUALMENTE NÃO HÁ PROFESSORES PARA ALTERAR");
+						break;
+					}
+				}
 				break;   
 			}
 		}
@@ -86,8 +105,7 @@ void menu_Professor (int* opcao)
 	printf("3 - Remover professor\n");
 	printf("4 - Listar professors\n");
 	printf("\nEntre com a opção desejada: ");
-	*opcao = 0;
-	ler_int(opcao, CASAS_INT_MENU);
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
 }
 
 int inserir_professor (Professor** inicio_professor, Info_Professor nova_info_professor)
@@ -113,13 +131,13 @@ int cadastrar_professor (Professor** inicio_professor, int* matricula_professor_
 	imprimir_linhas(NUM_LINHAS);
  	novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
 	printf("\nEntre com o nome do professor: ");
-	ler_string(nova_info_professor.nome, 50);
-	printf("\nEntre com o cpf do professor: ");
-	ler_string(nova_info_professor.cpf, 15);
-	printf("\nEntre com a data de nascimento do professor: ");
-	ler_string(nova_info_professor.data_nascimento, 11);
+	ler_string_f(nova_info_professor.nome, 50);
+	printf("\nEntre com o cpf do professor (Formato: [xxx.xxx.xxx-xx]): ");
+	ler_string_f(nova_info_professor.cpf, 15);
+	printf("\nEntre com a data de nascimento do professor (Formato: [dd/mm/yyyy]): ");
+	ler_string_f(nova_info_professor.data_nascimento, 11);
 	printf("\nEntre com o sexo do professor [M ou F]: ");
-	ler_string(nova_info_professor.sexo, 2);
+	ler_string_f(nova_info_professor.sexo, 2);
 	imprimir_linhas(NUM_LINHAS);
 
 	if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
@@ -182,3 +200,44 @@ void buscar_professor_matricula (Professor* atual_professor, Professor** profess
 	buscar_professor_matricula(atual_professor->prox, professor_alvo, matricula);
 }
 
+int alterar_professor_matricula (Professor** inicio_professor, int matricula)
+{
+	if (*inicio_professor == NULL)
+		return LISTA_VAZIA;
+		
+	Professor* professor_alvo = NULL;
+	buscar_professor_matricula((*inicio_professor), &professor_alvo, matricula);
+
+
+	if (professor_alvo == NULL)
+		return MATRICULA_NAO_ENCONTRADA;
+	else
+	{
+		int opcao;
+
+		mostrar_professor(professor_alvo);
+		
+		imprimir_linhas(NUM_LINHAS);
+
+		mudar_campo_str(professor_alvo->info.nome, "nome", sizeof(professor_alvo->info.nome), &opcao);
+		mudar_campo_str(professor_alvo->info.cpf, "cpf", sizeof(professor_alvo->info.cpf), &opcao);
+		mudar_campo_str(professor_alvo->info.data_nascimento, "data de nascimento", sizeof(professor_alvo->info.data_nascimento), &opcao);
+		mudar_campo_str(professor_alvo->info.sexo, "sexo", sizeof(professor_alvo->info.sexo), &opcao);
+
+		return ALTERACAO_SUCESSO;
+	}
+}
+
+void mostrar_professor (Professor* professor_alvo)
+{	
+
+	imprimir_linhas(NUM_LINHAS);
+	imprimir_campo("Matrícula", int_para_string(professor_alvo->info.matricula));
+	imprimir_campo("Nome", professor_alvo->info.nome);
+	imprimir_campo("CPF", professor_alvo->info.cpf);
+	imprimir_campo("Data de Nascimento", professor_alvo->info.data_nascimento);
+	imprimir_campo("Sexo", professor_alvo->info.sexo);
+	imprimir_linhas(NUM_LINHAS);
+
+	printf("\n");
+}

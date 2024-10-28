@@ -20,6 +20,7 @@ int main (void)
 
     do {
         menu_main(&opcao);
+
         switch (opcao * -1)
         {
           case (OPCAO_MODULO_ALUNO):
@@ -59,8 +60,7 @@ void menu_main (int* opcao)
 	printf("2 - Módulo Professor\n");
 	printf("3 - Módulo Disciplinas\n");
 	printf("\nEntre com a opção desejada: ");
-	*opcao = 0;
-	ler_int(opcao, CASAS_INT_MENU);
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
 }
 
 void liberar_alunos (Aluno* aluno_atual)
