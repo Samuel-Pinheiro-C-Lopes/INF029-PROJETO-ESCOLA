@@ -38,7 +38,7 @@ char* int_para_string (int num)
     return string;
 }
 
-// Transfere o equivalente numérico dos caracteres de uma string para um número
+// Transfere o equivalente numérico dos caracteres de uma string para um número (requer que num == 0)
 void string_para_int (int* num, char* string)
 {
     // caso string esteja no final
@@ -58,6 +58,14 @@ void string_para_int (int* num, char* string)
 		*num += *(string) - 48;
 
 	string_para_int(num, string + 1);
+}
+
+// Extensor de string_para_int que inicializa o número para o valor esperado
+void ext_string_para_int (int* num, char* string)
+{
+	*num = 0;
+
+	string_para_int(num, string);
 }
 
 // MATH
@@ -230,6 +238,191 @@ void mudar_campo_str (char* campo, char* nome_campo, int tamanho_campo, int* opc
 	ler_string_f(campo, tamanho_campo);
 }
 
+// VALIDAR CPF
+
+int validar_cpf (char* cpf)
+{
+	int retorno;
+
+	retorno = validar_cpf_formatacao(cpf);
+	if (retorno != FORMATACAO_VALIDA)
+		return retorno;
+	
+	retorno = validar_cpf_digitos(cpf);
+	if (retorno != DIGITO_VALIDO)
+		return retorno;
+
+	return CPF_VALIDO;
+}
+
+int validar_cpf_digitos(char* cpf)
+{
+	int digito_1 = cpf[12] - 48;
+	int digito_2 = cpf[13] - 48;
+	int soma1 = 0;
+	int soma2 = 0;
+	int i, j;
+	char atual;
+
+	i = 0; j = 0;
+	while (*(cpf + i) != '-')
+	{
+		atual = *(cpf + i);
+		if (atual != 46)
+			soma1 += (atual - 48) * (++j);
+		i++;
+	}
+	
+	if (!(digito_1 == ((soma1 % 11) % 10)))
+		return DIGITO_INVALIDO;
+
+	i = 0; j = 0;
+	while (*(cpf + i) != '-')
+	{
+		atual = *(cpf + i);
+		if (atual != 46)
+			soma2 += (atual - 48) * j++;
+		i++;
+	}
+
+	soma2 += digito_1 * j;
+
+	if (!(digito_2 == ((soma2 % 11) % 10)))
+		return DIGITO_INVALIDO;
+
+	return DIGITO_VALIDO;
+}
+
+int validar_cpf_formatacao (char* cpf)
+{
+	char atual;
+	for (int i = 0; *(cpf + i) != '\0'; i++)
+	{
+		atual = *(cpf + i);
+		if (i == 3 || i == 7)
+		{
+			if (atual !=  '.')
+				return FORMATACAO_INVALIDA;
+		}
+		else if (i == 11)
+		{
+			if (atual != '-')
+				return FORMATACAO_INVALIDA;
+		}
+		else 
+		{
+			if (atual > 57 || atual < 48)
+				return FORMATACAO_INVALIDA;
+		}
+	}
+
+	return FORMATACAO_VALIDA;
+}
+
+// VALIDAR DATA
+
+int validar_data (char* data)
+{
+	int retorno;
+
+	retorno = validar_data_formatacao(data);
+	if (retorno != FORMATACAO_VALIDA)
+		return retorno;
+
+	int dia, mes, ano;
+	ext_string_para_int(&dia, data);
+	ext_string_para_int(&mes, (data + 3));
+	ext_string_para_int(&ano, (data + 6));
+
+	retorno = validar_data_dia(dia, mes, ano);
+	if (retorno != DIA_VALIDO)
+		return retorno;
+
+	retorno = validar_data_mes(mes);
+	if (retorno != MES_VALIDO)
+		return retorno;
+
+	return DATA_VALIDA;
+}
+
+int validar_data_dia (int dia, int mes, int ano)
+{
+	if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12)
+	{
+		if (dia > 31)
+			return DIA_INVALIDO;
+	}
+	else if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+	{
+		if (dia > 30)
+			return DIA_INVALIDO;
+	}
+	else if (ano % 4 == 0 && ano % 100 != 0)
+	{
+		if (dia > 29)
+			return DIA_INVALIDO;
+	}
+	else
+		if (dia > 28)
+			return DIA_INVALIDO;
+
+	return DIA_VALIDO;
+}
+
+int validar_data_mes (int mes)
+{
+	if (mes > 12 || mes < 1)
+		return MES_INVALIDO;
+	else 
+		return MES_VALIDO;
+}
+
+int validar_data_formatacao (char* data)
+{
+	char atual;
+	for (int i = 0; *(data + i) != '\0'; i++)
+	{
+		atual = *(data + i);
+		if (i == 2 || i == 5)
+		{
+			if (atual != '/')
+				return FORMATACAO_INVALIDA;
+		}
+		else if (atual < 48 || atual > 57)
+			return FORMATACAO_VALIDA;
+	}
+
+	return FORMATACAO_VALIDA;
+}
+
+int validar_nome(char* nome)
+{
+	int i;
+	for (i = 0; *(nome + i) != '\0'; i++)
+		if (((*(nome + i) < 65 || *(nome + i) > 90) && (*(nome + i) < 97 || *(nome + i) > 122)) || *(nome + i) == 32)
+			return FORMATACAO_INVALIDA;
+
+	if (i == 0)
+		return FORMATACAO_INVALIDA;
+
+	return FORMATACAO_VALIDA;
+}
+
+int validar_sexo(char* sexo)
+{
+	if (sexo[0] == 'M' || sexo[0] == 'F')
+		return FORMATACAO_VALIDA;
+	else
+		return FORMATACAO_INVALIDA;
+}
+
+void verificar_string (char* string_entrada, char* string_verificacao, int* verificacao)
+{
+	if (*(string_verificacao) == '\0')
+		*verificacao = STRING_IGUAL;
+	else if (*(string_entrada) == *(string_verificacao))
+		verificar_string(string_entrada + 1, string_verificacao + 1, verificacao);
+}
 
 // IDENTIDADE 
 

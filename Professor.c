@@ -2,7 +2,7 @@
 #include "Utils.h"
 
 
-void main_professor (Professor** inicio_professor, int* matricula_professor_incr, int* opcao)
+void main_professor (Professor** inicio_professor, Aluno** inicio_aluno, int* matricula_professor_incr, int* opcao)
 {
 	int mat;
 	do 
@@ -13,7 +13,7 @@ void main_professor (Professor** inicio_professor, int* matricula_professor_incr
 		{
 			case (OPCAO_CADASTRAR):
 			{
-				switch (cadastrar_professor(inicio_professor, matricula_professor_incr))
+				switch (cadastrar_professor(inicio_professor, inicio_aluno, matricula_professor_incr))
 				{
 					case (CADASTRO_SUCESSO):
 					{
@@ -124,26 +124,44 @@ int inserir_professor (Professor** inicio_professor, Info_Professor nova_info_pr
 	return INSERCAO_SUCESSO;
 }
 
-int cadastrar_professor (Professor** inicio_professor, int* matricula_professor_incr)
+int cadastrar_professor (Professor** inicio_professor, Aluno** inicio_aluno, int* matricula_professor_incr)
 {
 	Info_Professor nova_info_professor;
+	int retorno = INFO_VALIDA;
+	
+	do
+	{
+		imprimir_linhas(NUM_LINHAS);
+		printf("\nEntre com o nome do professor: ");
+		ler_string_f(nova_info_professor.nome, 50);
+		printf("\nEntre com o cpf do professor (Formato: [xxx.xxx.xxx-xx]): ");
+		ler_string_f(nova_info_professor.cpf, 15);
+		printf("\nEntre com a data de nascimento do professor (Formato: [dd/mm/yyyy]): ");
+		ler_string_f(nova_info_professor.data_nascimento, 11);
+		printf("\nEntre com o sexo do professor [M ou F]: ");
+		ler_string_f(nova_info_professor.sexo, 2);
+		imprimir_linhas(NUM_LINHAS);
 
-	imprimir_linhas(NUM_LINHAS);
- 	novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
-	printf("\nEntre com o nome do professor: ");
-	ler_string_f(nova_info_professor.nome, 50);
-	printf("\nEntre com o cpf do professor (Formato: [xxx.xxx.xxx-xx]): ");
-	ler_string_f(nova_info_professor.cpf, 15);
-	printf("\nEntre com a data de nascimento do professor (Formato: [dd/mm/yyyy]): ");
-	ler_string_f(nova_info_professor.data_nascimento, 11);
-	printf("\nEntre com o sexo do professor [M ou F]: ");
-	ler_string_f(nova_info_professor.sexo, 2);
-	imprimir_linhas(NUM_LINHAS);
+		retorno = validar_info_professor(inicio_professor, inicio_aluno, nova_info_professor);
 
-	if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
-		return CADASTRO_SUCESSO;
-	else
-		return DATA_INVALIDA;
+		if (retorno != INFO_VALIDA)
+		{
+			printf("\nAlguma informação de cadastro não é válida...\n");
+			printf("\nAinda deseja realizar o cadastro?\n[1 para sim ou 0 para não]: ");
+			ext_ler_int_f(&retorno, CASAS_INT_MENU);
+			system("clear");
+		}
+
+	} while (retorno != OPCAO_SAIR && retorno != INFO_VALIDA);
+
+	if (retorno == INFO_VALIDA)
+	{
+ 		novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
+		if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
+			return CADASTRO_SUCESSO;
+	}
+	
+	return CADASTRO_FRACASSO;
 }
 
 void listar_professores (Professor* atual_professor)
@@ -241,3 +259,37 @@ void mostrar_professor (Professor* professor_alvo)
 
 	printf("\n");
 }
+
+int validar_info_professor(Professor** inicio_professor, Aluno** inicio_aluno, Info_Professor nova_info_professor)
+{
+	int retorno = INFO_VALIDA;
+	int tem_cpf = CPF_NAO_ENCONTRADO;
+	verificar_professores_cpf(*inicio_professor, &tem_cpf, nova_info_professor.cpf);
+
+	if (validar_data(nova_info_professor.data_nascimento) == DATA_INVALIDA)
+		retorno = DATA_INVALIDA;
+	else if (validar_cpf(nova_info_professor.cpf) == CPF_INVALIDO)
+		retorno = CPF_INVALIDO;
+	else if (validar_nome(nova_info_professor.nome) == FORMATACAO_INVALIDA)
+		retorno = FORMATACAO_INVALIDA;
+	else if (validar_sexo(nova_info_professor.sexo) == FORMATACAO_INVALIDA)
+		retorno = FORMATACAO_INVALIDA;
+	else if (tem_cpf == CPF_ENCONTRADO)
+		retorno = CPF_ENCONTRADO;
+	
+	return retorno;
+}
+
+void verificar_professores_cpf (Professor* professor_atual, int* tem_cpf, char* cpf)
+{
+		
+	if (professor_atual == NULL)
+		return;
+	else
+		verificar_string(cpf, professor_atual->info.cpf, tem_cpf);
+
+	if (*tem_cpf != STRING_IGUAL)
+		verificar_professores_cpf(professor_atual->prox, tem_cpf, cpf);
+}
+
+

@@ -33,6 +33,19 @@
 #define CPF_VALIDO (-44)
 #define DATA_VALIDA (-45)
 #define CHAR_VALIDO (-46)
+#define DIA_INVALIDO (-47)
+#define DIA_VALIDO (-48)
+#define MES_VALIDO (-49)
+#define MES_INVALIDO (-50)
+#define FORMATACAO_VALIDA (-51)
+#define FORMATACAO_INVALIDA (-52)
+#define DIGITO_VALIDO (-53)
+#define DIGITO_INVALIDO (-54)
+#define CPF_ENCONTRADO (-55)
+#define CPF_NAO_ENCONTRADO (-56)
+#define INFO_VALIDA (-61)
+#define INFO_INVALIDA (-62)
+#define STRING_IGUAL (-63)
 
 // Definições de sucesso
 #define REMOCAO_SUCESSO (-65)
@@ -55,6 +68,7 @@
 void qnt_algarismos_int (int* qnt, int num);
 char* int_para_string (int num);
 void string_para_int (int* num, char* string);
+void ext_string_para_int (int* num, char* string);
 void multiplicacao_sucessiva (int* num, int pot, int count);
 void ler_string(char* string, int tam);
 void ler_string_f(char* string, int tam);
@@ -68,11 +82,24 @@ void mudar_campo_int(int* campo, char* mensagem, int casas_campo, int* opcao);
 void aviso_usuario_c(char* string);
 void aviso_usuario_l(char* string);
 void receber_matricula(int* mat);
-void limpar (void);
-void flush_stdin();
 void receber_string(char* string, int tam);
 void receber_codigo (int* cod);
+
 void novo_identificador(int* novo, int* incrementador);
 void inicializar_incrementador (int** incrementador);
 
+int validar_data(char* data);
+int validar_data_dia(int dia, int mes, int ano);
+int validar_data_mes(int mes);
+int validar_data_formatacao(char* data);
+
+int validar_cpf(char* cpf);
+int validar_cpf_formatacao(char* cpf);
+int validar_cpf_digitos(char* cpf);
+int validar_nome(char* nome);
+int validar_sexo(char* sexo);
+
+void verificar_string(char* string_entrada, char* string_verificacao, int* verificacao);
+
+int gerente_retorno_cadastro(int retorno);
 #endif

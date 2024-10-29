@@ -2,7 +2,7 @@
 #include "Utils.h"
 
 
-void main_aluno (Aluno **inicio_aluno, int* matricula_aluno_incr, int* opcao)
+void main_aluno (Aluno **inicio_aluno, Professor** inicio_professor, int* matricula_aluno_incr, int* opcao)
 {
 	int mat;
 	do 
@@ -13,7 +13,7 @@ void main_aluno (Aluno **inicio_aluno, int* matricula_aluno_incr, int* opcao)
 		{
 			case (OPCAO_CADASTRAR):
 			{
-				switch (cadastrar_aluno(inicio_aluno, matricula_aluno_incr))
+				switch (cadastrar_aluno(inicio_aluno, inicio_professor, matricula_aluno_incr))
 				{
 					case (CADASTRO_SUCESSO):
 					{
@@ -125,31 +125,44 @@ int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
 	return INSERCAO_SUCESSO;
 }
 
-int cadastrar_aluno (Aluno** inicio_aluno, int* matricula_aluno_incr)
+int cadastrar_aluno (Aluno** inicio_aluno, Professor** inicio_professor, int* matricula_aluno_incr)
 {
 	Info_Aluno nova_info_aluno;
+	int retorno = INFO_VALIDA;
+	
+	do
+	{
+		imprimir_linhas(NUM_LINHAS);
+		printf("\nEntre com o nome do aluno: ");
+		ler_string_f(nova_info_aluno.nome, 50);
+		printf("\nEntre com o cpf do aluno (Formato: [xxx.xxx.xxx-xx]): ");
+		ler_string_f(nova_info_aluno.cpf, 15);
+		printf("\nEntre com a data de nascimento do aluno (Formato: [dd/mm/yyyy]): ");
+		ler_string_f(nova_info_aluno.data_nascimento, 11);
+		printf("\nEntre com o sexo do aluno [M ou F]: ");
+		ler_string_f(nova_info_aluno.sexo, 2);
+		imprimir_linhas(NUM_LINHAS);
 
-	imprimir_linhas(NUM_LINHAS);
-	novo_identificador(&(nova_info_aluno.matricula), matricula_aluno_incr);
+		retorno = validar_info_aluno(inicio_aluno, inicio_professor, nova_info_aluno);
 
-	printf("\nEntre com o nome do aluno: ");
-	ler_string_f(nova_info_aluno.nome, sizeof(nova_info_aluno.nome));
+		if (retorno != INFO_VALIDA)
+		{
+			printf("\nAlguma informação de cadastro não é válida...\n");
+			printf("\nAinda deseja realizar o cadastro?\n[1 para sim ou 0 para não]: ");
+			ext_ler_int_f(&retorno, CASAS_INT_MENU);
+			system("clear");
+		}
 
-	printf("\nEntre com a data de nascimento do aluno (Formato: [dd/mm/yyyy]): ");
-	ler_string_f(nova_info_aluno.data_nascimento, sizeof(nova_info_aluno.data_nascimento));
+	} while (retorno != OPCAO_SAIR && retorno != INFO_VALIDA);
 
-	printf("\nEntre com o cpf do aluno (Formato: [xxx.xxx.xxx-xx]): ");
-	ler_string_f(nova_info_aluno.cpf, sizeof(nova_info_aluno.cpf));
-
-	printf("\nEntre com o sexo do aluno [M ou F]: ");
-	ler_string_f(nova_info_aluno.sexo, sizeof(nova_info_aluno.sexo));
-
-	imprimir_linhas(NUM_LINHAS);
-
-	if (inserir_aluno (inicio_aluno, nova_info_aluno) == INSERCAO_SUCESSO)	
-		return CADASTRO_SUCESSO;
-	else
-		return DATA_INVALIDA;
+	if (retorno == INFO_VALIDA)
+	{
+ 		novo_identificador((&nova_info_aluno.matricula), matricula_aluno_incr);
+		if (inserir_aluno (inicio_aluno, nova_info_aluno) == INSERCAO_SUCESSO)	
+			return CADASTRO_SUCESSO;
+	}
+	
+	return CADASTRO_FRACASSO;
 }
 
 void listar_alunos (Aluno* atual_aluno)
@@ -246,6 +259,39 @@ void mostrar_aluno (Aluno* aluno_alvo)
 	imprimir_linhas(NUM_LINHAS);
 
 	printf("\n");
+}
+
+
+void verificar_alunos_cpf (Aluno* aluno_atual, int* tem_cpf, char* cpf)
+{
+		
+	if (aluno_atual == NULL)
+		return;
+	else
+		verificar_string(cpf, aluno_atual->info.cpf, tem_cpf);
+
+	if (*tem_cpf != CPF_ENCONTRADO)
+		verificar_alunos_cpf(aluno_atual->prox, tem_cpf, cpf);
+}
+
+int validar_info_aluno(Aluno** inicio_aluno, Professor** inicio_professor, Info_Aluno nova_info_aluno)
+{
+	int retorno = INFO_VALIDA;
+	int tem_cpf = CPF_NAO_ENCONTRADO;
+	verificar_alunos_cpf(*inicio_aluno, &tem_cpf, nova_info_aluno.cpf);
+
+	if (validar_data(nova_info_aluno.data_nascimento) == DATA_INVALIDA)
+		retorno = DATA_INVALIDA;
+	else if (validar_cpf(nova_info_aluno.cpf) == CPF_INVALIDO)
+		retorno = CPF_INVALIDO;
+	else if (validar_nome(nova_info_aluno.nome) == FORMATACAO_INVALIDA)
+		retorno = FORMATACAO_INVALIDA;
+	else if (validar_sexo(nova_info_aluno.sexo) == FORMATACAO_INVALIDA)
+		retorno = FORMATACAO_INVALIDA;
+	else if (tem_cpf == CPF_ENCONTRADO)
+		retorno = CPF_ENCONTRADO;
+	
+	return retorno;
 }
 
 /* CONTINUAR
