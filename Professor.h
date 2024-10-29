@@ -16,7 +16,6 @@ void listar_professores (Professor* inicio_professor);
 void buscar_professor_matricula (Professor* inicio_professor, Professor** professor_alvo, int matricula);
 int alterar_professor_matricula (Professor** inicio_professor, int matricula);
 void mostrar_professor (Professor* professor_alvo);
-void verificar_professores_cpf(Professor* atual_professor, int* tem_cpf, char* cpf);
 int validar_info_professor(Professor** inicio_professor, Aluno** inicio_aluno, Info_Professor nova_info_professor);
 
 #endif

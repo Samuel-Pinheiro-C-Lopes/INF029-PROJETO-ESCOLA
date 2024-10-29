@@ -246,11 +246,11 @@ int validar_cpf (char* cpf)
 
 	retorno = validar_cpf_formatacao(cpf);
 	if (retorno != FORMATACAO_VALIDA)
-		return retorno;
+		return CPF_INVALIDO;
 	
 	retorno = validar_cpf_digitos(cpf);
 	if (retorno != DIGITO_VALIDO)
-		return retorno;
+		return CPF_INVALIDO;
 
 	return CPF_VALIDO;
 }

@@ -20,4 +20,6 @@ struct aluno
   Aluno* ant;
 };
 
+void verificar_alunos_cpf (Aluno* aluno_atual, int* tem_cpf, char* cpf);
+
 #endif

@@ -16,8 +16,6 @@ void listar_alunos (Aluno* inicio_aluno);
 void buscar_aluno_matricula (Aluno* atual_aluno, Aluno** aluno_alvo, int matricula);
 int alterar_aluno_matricula(Aluno** inicio_aluno, int matricula);
 void mostrar_aluno(Aluno* aluno_alvo);
-void verificar_alunos_cpf (Aluno* aluno_atual, int* tem_cpf, char* cpf);
 int validar_info_aluno(Aluno** inicio_aluno, Professor** inicio_professor, Info_Aluno nova_info_aluno);
-void verificar_alunos_cpf (Aluno* aluno_atual, int* tem_cpf, char* cpf);
 
 #endif

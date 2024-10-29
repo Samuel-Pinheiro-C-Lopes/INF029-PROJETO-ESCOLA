@@ -264,19 +264,25 @@ int validar_info_professor(Professor** inicio_professor, Aluno** inicio_aluno, I
 {
 	int retorno = INFO_VALIDA;
 	int tem_cpf = CPF_NAO_ENCONTRADO;
+
 	verificar_professores_cpf(*inicio_professor, &tem_cpf, nova_info_professor.cpf);
 
-	if (validar_data(nova_info_professor.data_nascimento) == DATA_INVALIDA)
+	if (validar_data(nova_info_professor.data_nascimento) != DATA_VALIDA)
 		retorno = DATA_INVALIDA;
-	else if (validar_cpf(nova_info_professor.cpf) == CPF_INVALIDO)
+	else if (validar_cpf(nova_info_professor.cpf) != CPF_VALIDO)
 		retorno = CPF_INVALIDO;
-	else if (validar_nome(nova_info_professor.nome) == FORMATACAO_INVALIDA)
+	else if (validar_nome(nova_info_professor.nome) != FORMATACAO_VALIDA)
 		retorno = FORMATACAO_INVALIDA;
-	else if (validar_sexo(nova_info_professor.sexo) == FORMATACAO_INVALIDA)
+	else if (validar_sexo(nova_info_professor.sexo) != FORMATACAO_VALIDA)
 		retorno = FORMATACAO_INVALIDA;
-	else if (tem_cpf == CPF_ENCONTRADO)
+	else if (tem_cpf != CPF_NAO_ENCONTRADO)
 		retorno = CPF_ENCONTRADO;
-	
+
+	tem_cpf = CPF_NAO_ENCONTRADO;
+	verificar_alunos_cpf(*inicio_aluno, &tem_cpf, nova_info_professor.cpf);
+	if (tem_cpf != CPF_NAO_ENCONTRADO)
+		retorno = CPF_ENCONTRADO;
+
 	return retorno;
 }
 

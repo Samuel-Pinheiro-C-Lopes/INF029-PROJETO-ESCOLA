@@ -20,4 +20,5 @@ struct professor
   Professor* ant;
 };
 
+void verificar_professores_cpf(Professor* atual_professor, int* tem_cpf, char* cpf);
 #endif
