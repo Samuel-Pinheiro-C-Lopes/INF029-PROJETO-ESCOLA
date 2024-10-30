@@ -11,6 +11,12 @@ void main_aluno (Aluno **inicio_aluno, Professor** inicio_professor, int* matric
 		system("clear");
 		switch (*opcao * -1)
 		{
+			case (-8):
+			{
+				ordenar_por_nomes(inicio_aluno);
+				getchar();
+				break;
+			}
 			case (OPCAO_CADASTRAR):
 			{
 				switch (cadastrar_aluno(inicio_aluno, inicio_professor, matricula_aluno_incr))
@@ -143,7 +149,7 @@ int cadastrar_aluno (Aluno** inicio_aluno, Professor** inicio_professor, int* ma
 		ler_string_f(nova_info_aluno.sexo, 2);
 		imprimir_linhas(NUM_LINHAS);
 
-		retorno = validar_info_aluno(inicio_aluno, inicio_professor, nova_info_aluno);
+		retorno = INFO_VALIDA; // validar_info_aluno(inicio_aluno, inicio_professor, nova_info_aluno);
 
 		if (retorno != INFO_VALIDA)
 		{
@@ -298,6 +304,184 @@ int validar_info_aluno(Aluno** inicio_aluno, Professor** inicio_professor, Info_
 		retorno = CPF_ENCONTRADO;
 
 	return retorno;
+}
+
+void quantidade_aluno_lista (Aluno* atual_aluno, int* qnt)
+{
+	if (atual_aluno == NULL)
+		return;
+	else
+	{
+		*qnt += 1;
+		quantidade_aluno_lista (atual_aluno->prox, qnt);
+	}
+}
+
+float valor_data (char* data)
+{ 
+	int dia;
+	int mes;
+	int ano;	
+
+	ext_string_para_int(&dia, data);
+	ext_string_para_int(&mes, (data + 3));
+	ext_string_para_int(&ano, (data + 6));
+
+	return (float) (dia + (ano * 365) + (mes * 30));
+}
+
+void listar_por_data (Aluno** inicio_aluno)
+{
+	int qnt_alunos = 0;
+	quantidade_aluno_lista (*inicio_aluno, &qnt_alunos);
+	Aluno aluno_arr[qnt_alunos];
+	Aluno novo_aluno_arr[qnt_alunos];
+	Aluno* aluno_atual = *inicio_aluno;
+	Aluno aluno_aux;
+	int trocou, i;
+	int valor_data_atl, valor_data_ant;
+
+	// preenche aluno_arr com os alunos da lista
+	for (i = 0; i < qnt_alunos && aluno_atual != NULL; i++)
+	{
+		aluno_arr[i] = *aluno_atual;
+		aluno_atual = aluno_atual->prox;
+	}
+
+	// preenche novo_aluno_arr com o conteúdo de aluno_arr
+	for (i = 0; i < qnt_alunos; i++)
+		novo_aluno_arr[i] = aluno_arr[i];
+	
+	do
+	{
+		trocou = 0;
+		for (i = 1; i < qnt_alunos; i++)
+		{
+			valor_data_ant = valor_data(novo_aluno_arr[i - 1].info.data_nascimento);
+			valor_data_atl = valor_data(novo_aluno_arr[i].info.data_nascimento); 
+			if (valor_data_ant > valor_data_atl)
+			{
+				aluno_aux = novo_aluno_arr[i];
+				novo_aluno_arr[i] = novo_aluno_arr[i - 1];
+				novo_aluno_arr[i - 1] = aluno_aux;
+				trocou = 1;
+			}
+		}
+	} while (trocou);
+
+	for (i = 0; i < qnt_alunos; i++)
+		printf("aluno: %s, \n data: %s\n", novo_aluno_arr[i].info.nome, novo_aluno_arr[i].info.data_nascimento);
+
+}
+
+void listar_por_sexo (Aluno* inicio_aluno)
+{
+	printf("\nM:");
+	Aluno* atual_aluno = inicio_aluno;
+	while (atual_aluno != NULL)
+	{
+		if (atual_aluno->info.sexo[0] == 'M')
+			printf("\nmat: %d", atual_aluno->info.matricula);
+		atual_aluno = atual_aluno->prox;
+	}
+	printf("\nF:");
+	atual_aluno = inicio_aluno;
+	while (atual_aluno != NULL)
+	{
+		if (atual_aluno->info.sexo[0] == 'F')
+			printf("\nmat: %d", atual_aluno->info.matricula);
+		atual_aluno = atual_aluno->prox;
+	}
+
+}
+
+void listar_por_substring (Aluno** inicio_aluno)
+{
+	int i;
+	char substring_busca[4];
+
+	printf("\nEntre com a substring de busca: ");
+	ler_string_f(substring_busca, 4);
+
+	Aluno* atual_aluno = *inicio_aluno;
+
+	while (atual_aluno != NULL)
+	{
+		for (i = 0; i < 4; i++)
+			if (*(substring_busca + i) != *(atual_aluno->info.nome + i))
+				break;
+
+		if (substring_busca[i] == '\0')
+			mostrar_aluno(atual_aluno);
+
+		atual_aluno = atual_aluno->prox;
+	}
+}
+
+void ordenar_por_nomes (Aluno** inicio_aluno)
+{
+	if (*inicio_aluno == NULL)
+		return;
+	else
+	{
+		int qnt_alunos = 0;
+		quantidade_aluno_lista (*inicio_aluno, &qnt_alunos);
+		Aluno novo_arr_aluno[qnt_alunos];
+		Aluno aluno_aux;
+		Aluno* aluno_atual = *inicio_aluno;
+		int letra = 0;
+		int proxima_letra;
+		int i;
+		int trocou = 1; 
+
+		for (i = 0; i < qnt_alunos && aluno_atual != NULL; i++)
+		{
+			novo_arr_aluno[i] = *aluno_atual;
+			aluno_atual = aluno_atual->prox;
+		}
+
+		while (trocou)
+		{
+			trocou = 0;
+			proxima_letra = 0;
+			for (i = 1; i < qnt_alunos; i++)
+			{
+				if (novo_arr_aluno[i - 1].info.nome[letra] > novo_arr_aluno[i].info.nome[letra])
+				{
+					aluno_aux = novo_arr_aluno[i];
+					novo_arr_aluno[i] = novo_arr_aluno[i - 1];
+					novo_arr_aluno[i - 1] = aluno_aux;
+					trocou = 1;
+				}
+				else if (novo_arr_aluno[i - 1].info.nome[letra] == novo_arr_aluno[i].info.nome[letra])
+				{
+					do
+						proxima_letra++;
+					while (novo_arr_aluno[i - 1].info.nome[proxima_letra] == novo_arr_aluno[i].info.nome[proxima_letra]);
+
+					if (novo_arr_aluno[i - 1].info.nome[proxima_letra] > novo_arr_aluno[i].info.nome[proxima_letra])
+					{
+						aluno_aux = novo_arr_aluno[i];
+						novo_arr_aluno[i] = novo_arr_aluno[i - 1];
+						novo_arr_aluno[i - 1] = aluno_aux;
+						trocou = 1;
+					}
+				}
+			}
+		}
+		for (i = 0; i < qnt_alunos; i++)
+			mostrar_aluno(novo_arr_aluno + i);
+
+		aviso_usuario_l("LISTAGEM POR ORDEM ALFABÉTICA FINALIZADA");
+	}
+}
+
+void listar_aniversariantes (Aluno** inicio_aluno)
+{
+	int mes;
+	printf("\nEntre com o mês de aniversário que quer conferir: ");
+	ext_ler_int_f(&mes, 2);
+
 }
 
 /* CONTINUAR
