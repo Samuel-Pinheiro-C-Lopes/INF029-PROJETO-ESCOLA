@@ -25,7 +25,7 @@ int main (void)
         {
           case (OPCAO_MODULO_ALUNO):
           {
-            main_aluno(&inicio_aluno, &inicio_professor, matricula_aluno_incr, &opcao);
+            main_aluno(&inicio_aluno, &inicio_professor, &inicio_disciplina, matricula_aluno_incr, &opcao);
             break;   
           }
           case (OPCAO_MODULO_PROFESSOR):

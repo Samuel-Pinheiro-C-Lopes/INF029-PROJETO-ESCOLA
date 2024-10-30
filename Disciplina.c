@@ -12,7 +12,6 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 	do 
 	{
 		menu_disciplina(opcao);
-		system("clear");
 		switch (*opcao * -1)
 		{
 			// CADASTRAR DISCIPLINA
@@ -45,11 +44,6 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 				do
 				{
 					menu_alterar(opcao);
-					if (*opcao * -1 != OPCAO_SAIR)
-					{
-						receber_codigo(&cod);
-						buscar_disciplina_codigo(*inicio_disciplina, &disciplina_alvo_menu, cod);
-					}
 
 					switch (*opcao * -1)
 					{
@@ -103,7 +97,9 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						// REMOVER ALUNO CADASTRADO EM UMA DISCIPLINA
 						case (OPCAO_REMOVER):
 						{
+							receber_codigo(&cod);
 							receber_matricula(&mat);
+							buscar_disciplina_codigo(*inicio_disciplina, &disciplina_alvo_menu, cod);
 							switch (remover_disciplina_aluno_matricula(disciplina_alvo_menu, mat))
 							{
 								case (REMOCAO_SUCESSO):
@@ -163,8 +159,39 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 				}
 				else 
 				{
-					listar_disciplinas(*inicio_disciplina);
-					aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
+					int opt_alt;
+					do
+					{
+						system("clear");
+						printf("\nENTRE COM A OPÇÃO:\n\n");
+						printf("0 - SAIR\n");
+						printf("1 - LISTAR POR EXTRAPOLAÇÃO\n");
+						printf("2 - LISTAR POR NÚMERO MÁXIMO  DE MATRÍCULA\n");
+						printf("3 - LISTAR TODOS\n");
+						printf("\nOpção: ");
+						ext_ler_int_f(&opt_alt, CASAS_INT_GERAL);
+						system("clear");
+
+						switch(opt_alt * 120)
+						{
+							case (120):
+							{
+								listar_disciplinas_extr('<', inicio_disciplina);
+								break;
+							}
+							case (240):
+							{
+								listar_disciplinas_extr('>', inicio_disciplina);
+								break;
+							}
+							case (360):
+							{
+								listar_disciplinas(*inicio_disciplina);
+								aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
+								break;
+							}
+						}
+					} while (opt_alt != OPCAO_SAIR);
 				}
 				break;   
 			}
@@ -206,6 +233,7 @@ void menu_disciplina (int* opcao)
 	printf("5 - Detalhar disciplina\n");
 	printf("\nEntre com a opção desejada: ");
 	ext_ler_int_f(opcao, CASAS_INT_MENU);
+	system("clear");
 }
 
 void menu_alterar (int* opcao)
@@ -219,6 +247,7 @@ void menu_alterar (int* opcao)
 	printf("0 - Sair\n");
 	printf("\nEntre com a opção desejada: ");
 	ext_ler_int_f(opcao, CASAS_INT_MENU);
+	system("clear");
 }
 
 void inserir_disciplina (Disciplina** inicio_disciplina, Info_Disciplina nova_info_disciplina)
@@ -304,6 +333,16 @@ int cadastrar_disciplina_aluno (Disciplina** inicio_disciplina, Aluno** inicio_a
 
 	if (disciplina == NULL)
 		return CODIGO_NAO_ENCONTRADO;
+
+	Disciplina_Aluno* atual_disciplina_aluno = disciplina->info.disciplina_aluno;
+
+	while (atual_disciplina_aluno != NULL)
+	{
+		if (atual_disciplina_aluno->aluno->info.matricula == mat)
+			return MATRICULA_NAO_ENCONTRADA;
+		else
+			atual_disciplina_aluno = atual_disciplina_aluno->prox;
+	}
 	
 	inserir_disciplina_aluno(disciplina, aluno);
 
@@ -397,6 +436,14 @@ int remover_disciplina_codigo (Disciplina** inicio_disciplina, int codigo)
 	if (disciplina_alvo->prox != NULL)
 		disciplina_alvo->prox->ant = disciplina_alvo->ant; 
 
+	while (disciplina_alvo->info.disciplina_aluno->prox != NULL)
+	{
+		disciplina_alvo->info.disciplina_aluno = disciplina_alvo->info.disciplina_aluno->prox;
+		free(disciplina_alvo->info.disciplina_aluno->ant);
+	}
+
+	free(disciplina_alvo->info.disciplina_aluno);
+
 	free(disciplina_alvo);
 
 	return REMOCAO_SUCESSO;
@@ -406,6 +453,7 @@ int remover_disciplina_aluno_matricula (Disciplina* disciplina, int matricula)
 {
 	Disciplina_Aluno* disciplina_aluno_alvo = NULL;
 	buscar_disciplina_aluno_matricula(disciplina->info.disciplina_aluno, &disciplina_aluno_alvo, matricula);
+	aviso_usuario_l("PASSEI DA BUSCA DISCIPLINA ALUNO MATRICULA");
 
 	if (disciplina_aluno_alvo == NULL)
 		return MATRICULA_NAO_ENCONTRADA;
@@ -427,22 +475,20 @@ void buscar_disciplina_codigo (Disciplina* atual_disciplina, Disciplina** discip
 {
 	if (atual_disciplina == NULL)
 		return;
-
-	if (atual_disciplina->info.codigo == codigo)
+	else if (atual_disciplina->info.codigo == codigo)
 		*disciplina_alvo = atual_disciplina;
-
-	buscar_disciplina_codigo(atual_disciplina->prox, disciplina_alvo, codigo);
+	else
+		buscar_disciplina_codigo(atual_disciplina->prox, disciplina_alvo, codigo);
 }
 
 void buscar_disciplina_aluno_matricula (Disciplina_Aluno* atual_disciplina_aluno, Disciplina_Aluno** disciplina_aluno_alvo, int matricula)
 {
 	if (atual_disciplina_aluno == NULL)
 		return;
-
-	if (atual_disciplina_aluno->aluno->info.matricula == matricula)
+	else if (atual_disciplina_aluno->aluno->info.matricula == matricula)
 		*disciplina_aluno_alvo = atual_disciplina_aluno;
-
-	buscar_disciplina_aluno_matricula(atual_disciplina_aluno->prox, disciplina_aluno_alvo, matricula);
+	else
+		buscar_disciplina_aluno_matricula(atual_disciplina_aluno->prox, disciplina_aluno_alvo, matricula);
 }
 
 int alterar_disciplina_matricula (Disciplina** inicio_disciplina, Professor** inicio_professor, int codigo)
@@ -540,3 +586,75 @@ void mostrar_disciplina (Disciplina* disciplina_alvo)
 
 	printf("\n");
 }
+
+void listar_disciplinas_extr (char sinal, Disciplina** inicio_disciplina)
+{
+	int num_extr, count;
+	printf("\nEntre com o número delimitador para os alunos matrículados na disciplina para o filtro: ");
+	ext_ler_int_f(&num_extr, CASAS_INT_GERAL);
+
+	Disciplina* atual_disciplina = *inicio_disciplina;
+	Disciplina_Aluno* atual_disciplina_aluno = NULL;
+
+	while (atual_disciplina != NULL)
+	{
+		count = 0;
+		atual_disciplina_aluno = atual_disciplina->info.disciplina_aluno;
+
+		for (;atual_disciplina_aluno != NULL; atual_disciplina_aluno = atual_disciplina_aluno->prox, count++);
+
+		if (sinal == '>')
+		{
+			if (count > num_extr)
+			{
+				mostrar_disciplina(atual_disciplina);
+				imprimir_linhas(NUM_LINHAS);
+				imprimir_campo("Quantidade", int_para_string(count));
+				imprimir_linhas(NUM_LINHAS);
+				printf("\n\n");
+			}
+		}
+		else if (sinal == '<')
+		{
+			if (count < num_extr)
+			{
+				mostrar_disciplina(atual_disciplina);
+				imprimir_linhas(NUM_LINHAS);
+				imprimir_campo("Quantidade", int_para_string(count));
+				imprimir_linhas(NUM_LINHAS);
+				printf("\n\n");
+			}
+		}
+
+		atual_disciplina = atual_disciplina->prox;
+	}
+
+	aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
+}
+
+/*
+void atualizar_disciplinas_alunos (Disciplina** inicio_disciplina, Aluno** inicio_aluno)
+{
+	Disciplina* atual_disciplina = *inicio_disciplina;
+	Disciplina_Aluno* atual_disciplina_aluno = NULL;
+	Aluno* aluno_encontrado = NULL;
+
+	while (atual_disciplina != NULL)
+	{
+		printf("\nNão foi aqui 1...");
+		atual_disciplina_aluno = atual_disciplina->info.disciplina_aluno;
+		while (atual_disciplina_aluno != NULL)
+		{
+			printf("\nNão foi aqui 2...");
+			printf("\n %d NÃO É ISSO EIN\n",  atual_disciplina_aluno->aluno->info.matricula);
+			buscar_aluno_matricula(*inicio_aluno, &aluno_encontrado, atual_disciplina_aluno->aluno->info.matricula);
+
+			if (aluno_encontrado == NULL)
+				remover_disciplina_aluno_matricula(atual_disciplina, atual_disciplina_aluno->aluno->info.matricula);
+
+			atual_disciplina_aluno = atual_disciplina_aluno->prox;
+		}
+		atual_disciplina = atual_disciplina->prox;
+	}
+}
+*/

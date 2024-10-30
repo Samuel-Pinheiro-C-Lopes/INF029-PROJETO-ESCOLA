@@ -17,5 +17,10 @@ void buscar_professor_matricula (Professor* inicio_professor, Professor** profes
 int alterar_professor_matricula (Professor** inicio_professor, int matricula);
 void mostrar_professor (Professor* professor_alvo);
 int validar_info_professor(Professor** inicio_professor, Aluno** inicio_aluno, Info_Professor nova_info_professor);
+void professor_listar_por_sexo (Professor* inicio_professor);
+void professor_listar_por_data (Professor** inicio_professor);
+void professor_listar_por_substring (Professor** inicio_professor);
+void professor_ordenar_por_nomes (Professor** inicio_professor);
+void professor_listar_aniversariantes (Professor** inicio_professor);
 
 #endif

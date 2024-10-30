@@ -2,21 +2,14 @@
 #include "Utils.h"
 
 
-void main_aluno (Aluno **inicio_aluno, Professor** inicio_professor, int* matricula_aluno_incr, int* opcao)
+void main_aluno (Aluno **inicio_aluno, Professor** inicio_professor, Disciplina** inicio_disciplina, int* matricula_aluno_incr, int* opcao)
 {
 	int mat;
 	do 
 	{
 		menu_Aluno(opcao);
-		system("clear");
 		switch (*opcao * -1)
 		{
-			case (-8):
-			{
-				ordenar_por_nomes(inicio_aluno);
-				getchar();
-				break;
-			}
 			case (OPCAO_CADASTRAR):
 			{
 				switch (cadastrar_aluno(inicio_aluno, inicio_professor, matricula_aluno_incr))
@@ -36,23 +29,55 @@ void main_aluno (Aluno **inicio_aluno, Professor** inicio_professor, int* matric
 			}
 			case (OPCAO_LISTAR):
 			{
-				if (*inicio_aluno == NULL)
+				do
 				{
-					aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
-					break;
-				}
-				else 
-				{
-					listar_alunos(*inicio_aluno);
-
-					aviso_usuario_l("LISTAGEM REALIZADA COM SUCESSO!");
-				}
-				break;   
+					menu_listar(opcao);
+					switch(*(opcao) * -10)	
+					{
+						case (LISTAR_POR_SEXO):
+						{
+							aluno_listar_por_sexo(*inicio_aluno);
+							break;
+						}
+						case (LISTAR_POR_DATA):
+						{
+							aluno_listar_por_data(inicio_aluno);
+							break;
+						}
+						case (LISTAR_POR_SUBSTRING):
+						{
+							aluno_listar_por_substring(inicio_aluno);
+							break;
+						}
+						case (LISTAR_ANIVERSARIANTES):
+						{
+							aluno_listar_aniversariantes(inicio_aluno);
+							break;
+						}
+						case (LISTAR_POR_NOMES):
+						{
+							aluno_ordenar_por_nomes(inicio_aluno);
+							break;
+						}
+						case (LISTAR_TODOS):
+						{
+							if (*inicio_aluno == NULL)
+								aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+							else
+							{
+								listar_alunos(*inicio_aluno);
+								aviso_usuario_l("LISTAGEM DE TODOS REALIZADA COM SUCESSO");
+							}
+							break;
+						}
+					}
+				} while (*opcao != OPCAO_SAIR);
+				break;
 			}
 			case (OPCAO_REMOVER):
 			{
  				receber_matricula(&mat);
-				switch (remover_aluno_matricula(inicio_aluno, mat))
+				switch (remover_aluno_matricula(inicio_aluno, inicio_disciplina, mat))
 				{
 					case (REMOCAO_SUCESSO):
 					{
@@ -113,6 +138,7 @@ void menu_Aluno (int* opcao)
 	printf("4 - Listar alunos\n");
 	printf("\nEntre com a opção desejada: ");
 	ext_ler_int_f(opcao, CASAS_INT_MENU);
+	system("clear");
 }
 
 int inserir_aluno (Aluno** inicio_aluno, Info_Aluno nova_info_aluno)
@@ -149,7 +175,7 @@ int cadastrar_aluno (Aluno** inicio_aluno, Professor** inicio_professor, int* ma
 		ler_string_f(nova_info_aluno.sexo, 2);
 		imprimir_linhas(NUM_LINHAS);
 
-		retorno = INFO_VALIDA; // validar_info_aluno(inicio_aluno, inicio_professor, nova_info_aluno);
+		retorno = validar_info_aluno(inicio_aluno, inicio_professor, nova_info_aluno);
 
 		if (retorno != INFO_VALIDA)
 		{
@@ -189,7 +215,7 @@ void listar_alunos (Aluno* atual_aluno)
 	listar_alunos(atual_aluno->prox);
 }
 
-int remover_aluno_matricula (Aluno** inicio_aluno, int matricula)
+int remover_aluno_matricula (Aluno** inicio_aluno, Disciplina** inicio_disciplina, int matricula)
 {
 	if (inicio_aluno == NULL)
 		return LISTA_VAZIA;
@@ -209,20 +235,49 @@ int remover_aluno_matricula (Aluno** inicio_aluno, int matricula)
 	if (aluno_alvo->prox != NULL)
 		aluno_alvo->prox->ant = aluno_alvo->ant; 
 
+	remover_disciplina_aluno (aluno_alvo, inicio_disciplina);
+
 	free(aluno_alvo);
 
 	return REMOCAO_SUCESSO;
+}
+
+void remover_disciplina_aluno (Aluno* aluno_alvo, Disciplina** inicio_disciplina)
+{
+	Disciplina* atual_disciplina = *inicio_disciplina;
+	Disciplina_Aluno* atual_disciplina_aluno = NULL;
+
+	while (atual_disciplina != NULL)
+	{
+		atual_disciplina_aluno = atual_disciplina->info.disciplina_aluno;
+		while (atual_disciplina_aluno != NULL)
+		{
+			if (aluno_alvo->info.matricula == atual_disciplina_aluno->aluno->info.matricula)
+			{
+				if (atual_disciplina_aluno->ant != NULL)
+					atual_disciplina_aluno->ant->prox = atual_disciplina_aluno->prox;
+				else
+					atual_disciplina->info.disciplina_aluno = atual_disciplina_aluno->prox;
+
+				if (atual_disciplina_aluno->prox != NULL)
+					atual_disciplina_aluno->prox->ant = atual_disciplina_aluno->ant;
+			}
+
+			atual_disciplina_aluno = atual_disciplina_aluno->prox;
+		}
+		atual_disciplina = atual_disciplina->prox;
+	}
+
 }
 
 void buscar_aluno_matricula (Aluno* atual_aluno, Aluno** aluno_alvo, int matricula)
 {
 	if (atual_aluno == NULL)
 		return;
-
-	if (atual_aluno->info.matricula == matricula)
+	else if (atual_aluno->info.matricula == matricula)
 		*aluno_alvo = atual_aluno;
-
-	buscar_aluno_matricula(atual_aluno->prox, aluno_alvo, matricula);
+	else
+		buscar_aluno_matricula(atual_aluno->prox, aluno_alvo, matricula);
 }
 
 int alterar_aluno_matricula (Aluno** inicio_aluno, int matricula)
@@ -317,21 +372,14 @@ void quantidade_aluno_lista (Aluno* atual_aluno, int* qnt)
 	}
 }
 
-float valor_data (char* data)
-{ 
-	int dia;
-	int mes;
-	int ano;	
-
-	ext_string_para_int(&dia, data);
-	ext_string_para_int(&mes, (data + 3));
-	ext_string_para_int(&ano, (data + 6));
-
-	return (float) (dia + (ano * 365) + (mes * 30));
-}
-
-void listar_por_data (Aluno** inicio_aluno)
+void aluno_listar_por_data (Aluno** inicio_aluno)
 {
+	if (*inicio_aluno == NULL)
+	{
+		aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+		return;
+	}
+
 	int qnt_alunos = 0;
 	quantidade_aluno_lista (*inicio_aluno, &qnt_alunos);
 	Aluno aluno_arr[qnt_alunos];
@@ -370,12 +418,19 @@ void listar_por_data (Aluno** inicio_aluno)
 	} while (trocou);
 
 	for (i = 0; i < qnt_alunos; i++)
-		printf("aluno: %s, \n data: %s\n", novo_aluno_arr[i].info.nome, novo_aluno_arr[i].info.data_nascimento);
+		mostrar_aluno(novo_aluno_arr + i);
 
+	aviso_usuario_l("LISTAGEM DOS ALUNOS POR DATA FEITA COM SUCESSO");
 }
 
-void listar_por_sexo (Aluno* inicio_aluno)
+void aluno_listar_por_sexo (Aluno* inicio_aluno)
 {
+	if (inicio_aluno == NULL)
+	{
+		aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+		return;
+	}
+
 	printf("\nM:");
 	Aluno* atual_aluno = inicio_aluno;
 	while (atual_aluno != NULL)
@@ -393,10 +448,17 @@ void listar_por_sexo (Aluno* inicio_aluno)
 		atual_aluno = atual_aluno->prox;
 	}
 
+	aviso_usuario_l("LISTAGEM POR SEXO FEITA COM SUCESSO");
 }
 
-void listar_por_substring (Aluno** inicio_aluno)
+void aluno_listar_por_substring (Aluno** inicio_aluno)
 {
+	if (*inicio_aluno == NULL)
+	{
+		aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+		return;
+	}
+
 	int i;
 	char substring_busca[4];
 
@@ -416,12 +478,17 @@ void listar_por_substring (Aluno** inicio_aluno)
 
 		atual_aluno = atual_aluno->prox;
 	}
+
+	aviso_usuario_l("LISTAGEM DE ALUNOS POR CARACTERES INICIAIS REALIZADA COM SUCESSO");
 }
 
-void ordenar_por_nomes (Aluno** inicio_aluno)
+void aluno_ordenar_por_nomes (Aluno** inicio_aluno)
 {
 	if (*inicio_aluno == NULL)
+	{
+		aviso_usuario_c("NÃO HÁ ALUNOS NO MOMENTO");
 		return;
+	}
 	else
 	{
 		int qnt_alunos = 0;
@@ -476,12 +543,29 @@ void ordenar_por_nomes (Aluno** inicio_aluno)
 	}
 }
 
-void listar_aniversariantes (Aluno** inicio_aluno)
+void aluno_listar_aniversariantes (Aluno** inicio_aluno)
 {
-	int mes;
-	printf("\nEntre com o mês de aniversário que quer conferir: ");
-	ext_ler_int_f(&mes, 2);
+	if (*inicio_aluno == NULL)
+	{
+		aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
+		return;
+	}
 
+	int mes_entrada, mes_teste;
+	printf("\nEntre com o mês de aniversário que quer conferir: ");
+	ext_ler_int_f(&mes_entrada, 2);
+	Aluno* atual_aluno = *inicio_aluno;
+
+	while (atual_aluno != NULL)
+	{
+		ext_string_para_int(&mes_teste, (atual_aluno->info.data_nascimento + 3));
+		if (mes_entrada == mes_teste)
+			mostrar_aluno(atual_aluno);
+
+		atual_aluno = atual_aluno->prox;
+	}
+
+	aviso_usuario_l("LISTAGEM DOS ANIVERSARIANTES DO MÊS REALIZADA");
 }
 
 /* CONTINUAR

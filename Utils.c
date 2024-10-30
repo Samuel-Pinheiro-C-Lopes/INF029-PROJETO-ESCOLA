@@ -1,5 +1,22 @@
 #include "Utils.h"
 
+void menu_listar (int* opcao)
+{
+	system("clear");
+	printf("##LISTAGEM##\n\n");
+	printf("Opções:\n");
+	printf("0 - Sair\n");
+	printf("1 - Listar por data\n");
+	printf("2 - Listar aniversariantes do mês\n");
+	printf("3 - Listar por ordem alfabética de nome\n");
+	printf("4 - Listar por sexo\n");
+	printf("5 - Listar Todos\n");
+	printf("6 - Listar por substring de até 3 caracteres\n");
+	printf("\nEntre com a opção desejada: ");
+	ext_ler_int_f(opcao, CASAS_INT_MENU);
+	system("clear");
+}
+
 // CONVERSÕES
 
 char* int_para_string (int num)
@@ -345,6 +362,21 @@ int validar_data (char* data)
 	return DATA_VALIDA;
 }
 
+float valor_data (char* data)
+{ 
+	int dia;
+	int mes;
+	int ano;	
+
+	ext_string_para_int(&dia, data);
+	ext_string_para_int(&mes, (data + 3));
+	ext_string_para_int(&ano, (data + 6));
+
+	return (float) (dia + (ano * 365) + (mes * 30));
+}
+
+
+
 int validar_data_dia (int dia, int mes, int ano)
 {
 	if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12)
@@ -542,3 +574,4 @@ void ler_int (int* int_num, int casas)
 
 
 	*/
+

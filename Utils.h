@@ -15,10 +15,18 @@
 #define OPCAO_LISTAR (-4)
 #define OPCAO_SAIR (0)
 
+// Definições de opções para menu alterar
+#define LISTAR_POR_DATA (-10)
+#define LISTAR_ANIVERSARIANTES (-20)
+#define LISTAR_POR_NOMES (-30)
+#define LISTAR_POR_SEXO (-40)
+#define LISTAR_TODOS (-50)
+#define LISTAR_POR_SUBSTRING (-60)
+
 // Definições erro falha ou incongruência
-#define MATRICULA_NAO_ENCONTRADA (-11)
-#define CODIGO_NAO_ENCONTRADO (-12)
-#define LISTA_VAZIA (-13)
+#define MATRICULA_NAO_ENCONTRADA (-21)
+#define CODIGO_NAO_ENCONTRADO (-22)
+#define LISTA_VAZIA (-23)
 
 // Definições de invalidade
 #define CPF_INVALIDO (-31)
@@ -36,13 +44,13 @@
 #define DIA_INVALIDO (-47)
 #define DIA_VALIDO (-48)
 #define MES_VALIDO (-49)
-#define MES_INVALIDO (-50)
-#define FORMATACAO_VALIDA (-51)
-#define FORMATACAO_INVALIDA (-52)
-#define DIGITO_VALIDO (-53)
-#define DIGITO_INVALIDO (-54)
-#define CPF_ENCONTRADO (-55)
-#define CPF_NAO_ENCONTRADO (-56)
+#define MES_INVALIDO (-51)
+#define FORMATACAO_VALIDA (-52)
+#define FORMATACAO_INVALIDA (-53)
+#define DIGITO_VALIDO (-54)
+#define DIGITO_INVALIDO (-55)
+#define CPF_ENCONTRADO (-56)
+#define CPF_NAO_ENCONTRADO (-57)
 #define INFO_VALIDA (-61)
 #define INFO_INVALIDA (-62)
 #define STRING_IGUAL (-63)
@@ -64,6 +72,8 @@
 
 // Macros
 #define CHAR_NUMERO (CHAR) ((CHAR >= 48) && (CHAR <= 57))
+
+void menu_listar(int* opcao);
 
 void qnt_algarismos_int (int* qnt, int num);
 char* int_para_string (int num);
@@ -92,6 +102,7 @@ int validar_data(char* data);
 int validar_data_dia(int dia, int mes, int ano);
 int validar_data_mes(int mes);
 int validar_data_formatacao(char* data);
+float valor_data (char* data);
 
 int validar_cpf(char* cpf);
 int validar_cpf_formatacao(char* cpf);

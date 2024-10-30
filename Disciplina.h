@@ -5,36 +5,10 @@
 #include "Utils.h"
 #include "Professor.h"
 #include "Aluno.h"
+#include "DisciplinaData.h"
 
 // Definições de opções para menu
 #define DETALHAR_DISCIPLINA (-5)
-
-typedef struct info_disciplina Info_Disciplina;
-typedef struct disciplina Disciplina;
-typedef struct disciplina_aluno Disciplina_Aluno;
-
-struct info_disciplina
-{
-  int codigo;
-  char nome[50];
-  int semestre;
-  Professor* professor;
-  Disciplina_Aluno* disciplina_aluno;
-};
-
-struct disciplina 
-{
-  Info_Disciplina info;
-  Disciplina* prox;
-  Disciplina* ant;
-};
-
-struct disciplina_aluno 
-{
-	Aluno* aluno;
-	Disciplina_Aluno* prox;
-	Disciplina_Aluno* ant;
-};
 
 void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Professor** inicio_professor, int* codigo_disciplina_incr, int* opcao);
 
@@ -64,4 +38,7 @@ void buscar_disciplina_aluno_matricula (Disciplina_Aluno* atual_disciplina_aluno
 
 int validar_info_disciplina(Info_Disciplina* info_disciplina);
 
+void atualizar_disciplinas_alunos (Disciplina** inicio_disciplina, Aluno** inicio_aluno);
+
+void listar_disciplinas_extr (char sinal, Disciplina** inicio_disciplina);
 #endif
