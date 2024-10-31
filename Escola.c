@@ -92,3 +92,13 @@ void liberar_disciplinas (Disciplina* disciplina_atual)
 
 	free(disciplina_atual);
 }
+
+void liberar_disciplina_alunos (Disciplina_Aluno* disciplina_aluno_atual)
+{
+	if (disciplina_aluno_atual == NULL)
+		return;
+
+	liberar_disciplina_alunos (disciplina_aluno_atual->prox);
+
+	free (disciplina_aluno_atual);
+}

@@ -197,6 +197,7 @@ int cadastrar_professor (Professor** inicio_professor, Aluno** inicio_aluno, int
 
 	if (retorno == INFO_VALIDA)
 	{
+		tornar_caixa_alta(nova_info_professor.nome);
  		novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
 		if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
 			return CADASTRO_SUCESSO;
@@ -338,9 +339,6 @@ int validar_info_professor(Professor** inicio_professor, Aluno** inicio_aluno, I
 	if (tem_cpf != CPF_NAO_ENCONTRADO)
 		retorno = CPF_ENCONTRADO;
 
-	printf("RETORNO:%d\n", retorno);
-	getchar();
-
 	return retorno;
 }
 
@@ -428,20 +426,20 @@ void professor_listar_por_sexo (Professor* inicio_professor)
 		return;
 	}
 
-	printf("\nM:");
+	printf("\nM:\n");
 	Professor* atual_professor = inicio_professor;
 	while (atual_professor != NULL)
 	{
 		if (atual_professor->info.sexo[0] == 'M')
-			printf("\nmat: %d", atual_professor->info.matricula);
+			mostrar_professor(atual_professor);
 		atual_professor = atual_professor->prox;
 	}
-	printf("\nF:");
+	printf("\nF:\n");
 	atual_professor = inicio_professor;
 	while (atual_professor != NULL)
 	{
 		if (atual_professor->info.sexo[0] == 'F')
-			printf("\nmat: %d", atual_professor->info.matricula);
+			mostrar_professor(atual_professor);
 		atual_professor = atual_professor->prox;
 	}
 
@@ -452,32 +450,43 @@ void professor_listar_por_substring (Professor** inicio_professor)
 {
 	if (*inicio_professor == NULL)
 	{
-		aviso_usuario_c("NÃO HÁ PROFESSORES CADASTRADOS NO MOMENTO");
+		aviso_usuario_c("NÃO HÁ ALUNOS MATRICULADOS NO MOMENTO");
 		return;
 	}
 
-	int i;
-	char substring_busca[4];
+	int i, j;
+	char substring_busca[50];
 
 	printf("\nEntre com a substring de busca: ");
-	ler_string_f(substring_busca, 4);
+	ler_string_f(substring_busca, 50);
 
 	Professor* atual_professor = *inicio_professor;
 
 	while (atual_professor != NULL)
 	{
-		for (i = 0; i < 4; i++)
-			if (*(substring_busca + i) != *(atual_professor->info.nome + i))
+		j = 0;
+		for (i = 0; i < 50; i++)
+		{
+			if (*(substring_busca) == *(atual_professor->info.nome + i))
+				for (j = 0; *(substring_busca + j) != '\0' && *(atual_professor->info.nome + i + j) != '\0'; j++)
+				{
+					if (*(substring_busca + j) != *(atual_professor->info.nome + i + j))
+						break;
+				}
+
+			if (*(substring_busca + j) == '\0')
+			{
+				mostrar_professor(atual_professor);
 				break;
-
-		if (substring_busca[i] == '\0')
-			mostrar_professor(atual_professor);
-
+			}
+		}
 		atual_professor = atual_professor->prox;
 	}
 
-	aviso_usuario_l("LISTAGEM POR CARACTERES INICIAS FEITA");
+	aviso_usuario_l("LISTAGEM DE ALUNOS POR CARACTERES INICIAIS REALIZADA COM SUCESSO");
 }
+
+
 
 void professor_ordenar_por_nomes (Professor** inicio_professor)
 {

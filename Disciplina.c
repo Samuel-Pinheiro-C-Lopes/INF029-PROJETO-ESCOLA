@@ -73,6 +73,7 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						// ALTERAR DADOS DE UMA DISCIPLINA
 						case (OPCAO_ALTERAR):
 						{
+							receber_codigo(&cod);
 							switch(alterar_disciplina_matricula(inicio_disciplina, inicio_professor, cod))
 							{
 								case (ALTERACAO_SUCESSO):
@@ -455,7 +456,6 @@ int remover_disciplina_aluno_matricula (Disciplina* disciplina, int matricula)
 {
 	Disciplina_Aluno* disciplina_aluno_alvo = NULL;
 	buscar_disciplina_aluno_matricula(disciplina->info.disciplina_aluno, &disciplina_aluno_alvo, matricula);
-	aviso_usuario_l("PASSEI DA BUSCA DISCIPLINA ALUNO MATRICULA");
 
 	if (disciplina_aluno_alvo == NULL)
 		return MATRICULA_NAO_ENCONTRADA;

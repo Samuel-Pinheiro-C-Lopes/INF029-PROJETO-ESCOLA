@@ -11,13 +11,24 @@ void menu_listar (int* opcao)
 	printf("3 - Listar por ordem alfabética de nome\n");
 	printf("4 - Listar por sexo\n");
 	printf("5 - Listar Todos\n");
-	printf("6 - Listar por substring de até 3 caracteres\n");
+	printf("6 - Listar por substring\n");
 	printf("\nEntre com a opção desejada: ");
 	ext_ler_int_f(opcao, CASAS_INT_MENU);
 	system("clear");
 }
 
 // CONVERSÕES
+
+void tornar_caixa_alta (char* string)
+{
+	if (*(string) == '\0')
+		return;
+
+	if (*(string) > 96 && *(string) < 123)
+		*(string) = *(string) - 32;
+
+	tornar_caixa_alta(string + sizeof(char));
+}
 
 char* int_para_string (int num)
 {

@@ -113,4 +113,6 @@ int validar_sexo(char* sexo);
 void verificar_string(char* string_entrada, char* string_verificacao, int* verificacao);
 
 int gerente_retorno_cadastro(int retorno);
+
+void tornar_caixa_alta (char* string);
 #endif

@@ -189,6 +189,7 @@ int cadastrar_aluno (Aluno** inicio_aluno, Professor** inicio_professor, int* ma
 
 	if (retorno == INFO_VALIDA)
 	{
+		tornar_caixa_alta(nova_info_aluno.nome);
  		novo_identificador((&nova_info_aluno.matricula), matricula_aluno_incr);
 		if (inserir_aluno (inicio_aluno, nova_info_aluno) == INSERCAO_SUCESSO)	
 			return CADASTRO_SUCESSO;
@@ -325,8 +326,6 @@ void mostrar_aluno (Aluno* aluno_alvo)
 
 void verificar_alunos_cpf (Aluno* aluno_atual, int* tem_cpf, char* cpf)
 {
-	printf("\nENTREI AQUI\n");	
-	getchar();
 	if (aluno_atual == NULL)
 		return;
 	else
@@ -431,20 +430,20 @@ void aluno_listar_por_sexo (Aluno* inicio_aluno)
 		return;
 	}
 
-	printf("\nM:");
+	printf("\nM:\n");
 	Aluno* atual_aluno = inicio_aluno;
 	while (atual_aluno != NULL)
 	{
 		if (atual_aluno->info.sexo[0] == 'M')
-			printf("\nmat: %d", atual_aluno->info.matricula);
+			mostrar_aluno(atual_aluno);
 		atual_aluno = atual_aluno->prox;
 	}
-	printf("\nF:");
+	printf("\nF:\n");
 	atual_aluno = inicio_aluno;
 	while (atual_aluno != NULL)
 	{
 		if (atual_aluno->info.sexo[0] == 'F')
-			printf("\nmat: %d", atual_aluno->info.matricula);
+			mostrar_aluno(atual_aluno);
 		atual_aluno = atual_aluno->prox;
 	}
 
@@ -459,23 +458,32 @@ void aluno_listar_por_substring (Aluno** inicio_aluno)
 		return;
 	}
 
-	int i;
-	char substring_busca[4];
+	int i, j;
+	char substring_busca[50];
 
 	printf("\nEntre com a substring de busca: ");
-	ler_string_f(substring_busca, 4);
+	ler_string_f(substring_busca, 50);
 
 	Aluno* atual_aluno = *inicio_aluno;
 
 	while (atual_aluno != NULL)
 	{
-		for (i = 0; i < 4; i++)
-			if (*(substring_busca + i) != *(atual_aluno->info.nome + i))
+		j = 0;
+		for (i = 0; i < 50; i++)
+		{
+			if (*(substring_busca) == *(atual_aluno->info.nome + i))
+				for (j = 0; *(substring_busca + j) != '\0' && *(atual_aluno->info.nome + i + j) != '\0'; j++)
+				{
+					if (*(substring_busca + j) != *(atual_aluno->info.nome + i + j))
+						break;
+				}
+
+			if (*(substring_busca + j) == '\0')
+			{
+				mostrar_aluno(atual_aluno);
 				break;
-
-		if (substring_busca[i] == '\0')
-			mostrar_aluno(atual_aluno);
-
+			}
+		}
 		atual_aluno = atual_aluno->prox;
 	}
 
