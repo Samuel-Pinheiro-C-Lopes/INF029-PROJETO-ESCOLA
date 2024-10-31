@@ -190,6 +190,7 @@ int cadastrar_aluno (Aluno** inicio_aluno, Professor** inicio_professor, int* ma
 	if (retorno == INFO_VALIDA)
 	{
 		tornar_caixa_alta(nova_info_aluno.nome);
+		tornar_caixa_alta(nova_info_aluno.sexo);
  		novo_identificador((&nova_info_aluno.matricula), matricula_aluno_incr);
 		if (inserir_aluno (inicio_aluno, nova_info_aluno) == INSERCAO_SUCESSO)	
 			return CADASTRO_SUCESSO;

@@ -453,7 +453,7 @@ int validar_nome(char* nome)
 
 int validar_sexo(char* sexo)
 {
-	if (sexo[0] == 'M' || sexo[0] == 'F')
+	if (*(sexo) == 'M' || *(sexo) == 'F' || *(sexo) == 'f' || *(sexo) == 'm')
 		return FORMATACAO_VALIDA;
 	else
 		return FORMATACAO_INVALIDA;

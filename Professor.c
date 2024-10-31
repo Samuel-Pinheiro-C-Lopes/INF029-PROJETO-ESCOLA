@@ -198,6 +198,7 @@ int cadastrar_professor (Professor** inicio_professor, Aluno** inicio_aluno, int
 	if (retorno == INFO_VALIDA)
 	{
 		tornar_caixa_alta(nova_info_professor.nome);
+		tornar_caixa_alta(nova_info_professor.sexo);
  		novo_identificador((&nova_info_professor.matricula), matricula_professor_incr);
 		if (inserir_professor (inicio_professor, nova_info_professor) == INSERCAO_SUCESSO)	
 			return CADASTRO_SUCESSO;
