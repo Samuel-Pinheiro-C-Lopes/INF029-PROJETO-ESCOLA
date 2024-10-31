@@ -364,10 +364,12 @@ void listar_disciplinas (Disciplina* atual_disciplina)
 	if (atual_disciplina == NULL)
 		return;
 
+	Professor* professor_disciplina = atual_disciplina->info.professor;
+
 	imprimir_linhas(NUM_LINHAS);
 	imprimir_campo("Nome", atual_disciplina->info.nome);
 	imprimir_campo("Código", int_para_string(atual_disciplina->info.codigo));
-	imprimir_campo("Professor", atual_disciplina->info.professor->info.nome);
+	imprimir_campo("Professor", (professor_disciplina != NULL ? professor_disciplina->info.nome : "PROFESSOR REMOVIDO..."));
 	imprimir_campo("Semestre", int_para_string(atual_disciplina->info.semestre));
 	imprimir_linhas(NUM_LINHAS);
 

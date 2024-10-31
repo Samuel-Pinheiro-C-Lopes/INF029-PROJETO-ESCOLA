@@ -2,7 +2,7 @@
 #include "Utils.h"
 
 
-void main_professor (Professor** inicio_professor, Aluno** inicio_aluno, int* matricula_professor_incr, int* opcao)
+void main_professor (Professor** inicio_professor, Aluno** inicio_aluno, Disciplina** inicio_disciplina, int* matricula_professor_incr, int* opcao)
 {
 	int mat;
 	do 
@@ -31,7 +31,7 @@ void main_professor (Professor** inicio_professor, Aluno** inicio_aluno, int* ma
 			{
 				if (*inicio_professor == NULL)
 				{
-					aviso_usuario_c("NÃO HÁ PROFESSORS MATRICULADOS NO MOMENTO");
+					aviso_usuario_c("NÃO HÁ PROFESSORES MATRICULADOS NO MOMENTO");
 					break;
 				}
 				else 
@@ -85,7 +85,7 @@ void main_professor (Professor** inicio_professor, Aluno** inicio_aluno, int* ma
 			case (OPCAO_REMOVER):
 			{
  				receber_matricula(&mat);
-				switch (remover_professor_matricula(inicio_professor, mat))
+				switch (remover_professor_matricula(inicio_professor, inicio_disciplina, mat))
 				{
 					case (REMOCAO_SUCESSO):
 					{
@@ -143,7 +143,7 @@ void menu_Professor (int* opcao)
 	printf("1 - Cadastrar professor\n");
 	printf("2 - Alterar professor\n");
 	printf("3 - Remover professor\n");
-	printf("4 - Listar professors\n");
+	printf("4 - Listar professores\n");
 	printf("\nEntre com a opção desejada: ");
 	ext_ler_int_f(opcao, CASAS_INT_MENU);
 	system("clear");
@@ -223,7 +223,7 @@ void listar_professores (Professor* atual_professor)
 	listar_professores(atual_professor->prox);
 }
 
-int remover_professor_matricula (Professor** inicio_professor, int matricula)
+int remover_professor_matricula (Professor** inicio_professor, Disciplina** inicio_disciplina, int matricula)
 {
 	if (inicio_professor == NULL)
 		return LISTA_VAZIA;
@@ -234,6 +234,8 @@ int remover_professor_matricula (Professor** inicio_professor, int matricula)
 
 	if (professor_alvo == NULL)
 		return MATRICULA_NAO_ENCONTRADA;
+
+	remover_disciplina_professor_matricula(matricula, *inicio_disciplina);
 
 	if (professor_alvo->ant != NULL)
 		professor_alvo->ant->prox = professor_alvo->prox;
@@ -246,6 +248,18 @@ int remover_professor_matricula (Professor** inicio_professor, int matricula)
 	free(professor_alvo);
 
 	return REMOCAO_SUCESSO;
+}
+
+void remover_disciplina_professor_matricula (int matricula, Disciplina* atual_disciplina)
+{
+	if (atual_disciplina == NULL)
+		return;
+
+	if (atual_disciplina->info.professor != NULL)
+		if (atual_disciplina->info.professor->info.matricula == matricula)
+			atual_disciplina->info.professor = NULL;
+
+	remover_disciplina_professor_matricula(matricula, atual_disciplina->prox);
 }
 
 void buscar_professor_matricula (Professor* atual_professor, Professor** professor_alvo, int matricula)
@@ -362,30 +376,30 @@ void professor_listar_por_data (Professor** inicio_professor)
 		return;
 	}
 
-	int qnt_professors = 0;
-	quantidade_professor_lista (*inicio_professor, &qnt_professors);
-	Professor professor_arr[qnt_professors];
-	Professor novo_professor_arr[qnt_professors];
+	int qnt_professores = 0;
+	quantidade_professor_lista (*inicio_professor, &qnt_professores);
+	Professor professor_arr[qnt_professores];
+	Professor novo_professor_arr[qnt_professores];
 	Professor* professor_atual = *inicio_professor;
 	Professor professor_aux;
 	int trocou, i;
 	int valor_data_atl, valor_data_ant;
 
-	// preenche professor_arr com os professors da lista
-	for (i = 0; i < qnt_professors && professor_atual != NULL; i++)
+	// preenche professor_arr com os professores da lista
+	for (i = 0; i < qnt_professores && professor_atual != NULL; i++)
 	{
 		professor_arr[i] = *professor_atual;
 		professor_atual = professor_atual->prox;
 	}
 
 	// preenche novo_professor_arr com o conteúdo de professor_arr
-	for (i = 0; i < qnt_professors; i++)
+	for (i = 0; i < qnt_professores; i++)
 		novo_professor_arr[i] = professor_arr[i];
 	
 	do
 	{
 		trocou = 0;
-		for (i = 1; i < qnt_professors; i++)
+		for (i = 1; i < qnt_professores; i++)
 		{
 			valor_data_ant = valor_data(novo_professor_arr[i - 1].info.data_nascimento);
 			valor_data_atl = valor_data(novo_professor_arr[i].info.data_nascimento); 
@@ -399,7 +413,7 @@ void professor_listar_por_data (Professor** inicio_professor)
 		}
 	} while (trocou);
 
-	for (i = 0; i < qnt_professors; i++)
+	for (i = 0; i < qnt_professores; i++)
 		mostrar_professor(novo_professor_arr + i);
 
 	aviso_usuario_l("LISTAGEM DOS PROFESSORES POR DATA FEITA COM SUCESSO");
@@ -471,9 +485,9 @@ void professor_ordenar_por_nomes (Professor** inicio_professor)
 		return;
 	else
 	{
-		int qnt_professors = 0;
-		quantidade_professor_lista (*inicio_professor, &qnt_professors);
-		Professor novo_arr_professor[qnt_professors];
+		int qnt_professores = 0;
+		quantidade_professor_lista (*inicio_professor, &qnt_professores);
+		Professor novo_arr_professor[qnt_professores];
 		Professor professor_aux;
 		Professor* professor_atual = *inicio_professor;
 		int letra = 0;
@@ -481,7 +495,7 @@ void professor_ordenar_por_nomes (Professor** inicio_professor)
 		int i;
 		int trocou = 1; 
 
-		for (i = 0; i < qnt_professors && professor_atual != NULL; i++)
+		for (i = 0; i < qnt_professores && professor_atual != NULL; i++)
 		{
 			novo_arr_professor[i] = *professor_atual;
 			professor_atual = professor_atual->prox;
@@ -491,7 +505,7 @@ void professor_ordenar_por_nomes (Professor** inicio_professor)
 		{
 			trocou = 0;
 			proxima_letra = 0;
-			for (i = 1; i < qnt_professors; i++)
+			for (i = 1; i < qnt_professores; i++)
 			{
 				if (novo_arr_professor[i - 1].info.nome[letra] > novo_arr_professor[i].info.nome[letra])
 				{
@@ -516,7 +530,7 @@ void professor_ordenar_por_nomes (Professor** inicio_professor)
 				}
 			}
 		}
-		for (i = 0; i < qnt_professors; i++)
+		for (i = 0; i < qnt_professores; i++)
 			mostrar_professor(novo_arr_professor + i);
 
 		aviso_usuario_l("LISTAGEM POR ORDEM ALFABÉTICA FINALIZADA");

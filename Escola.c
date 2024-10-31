@@ -30,7 +30,7 @@ int main (void)
           }
           case (OPCAO_MODULO_PROFESSOR):
           {
-			main_professor(&inicio_professor, &inicio_aluno, matricula_professor_incr, &opcao);
+			main_professor(&inicio_professor, &inicio_aluno, &inicio_disciplina, matricula_professor_incr, &opcao);
 			break;
           }
           case (OPCAO_MODULO_DISCIPLINAS):

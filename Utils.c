@@ -431,7 +431,7 @@ int validar_nome(char* nome)
 {
 	int i;
 	for (i = 0; *(nome + i) != '\0'; i++)
-		if (((*(nome + i) < 65 || *(nome + i) > 90) && (*(nome + i) < 97 || *(nome + i) > 122)) || *(nome + i) == 32)
+		if (((*(nome + i) < 65 || *(nome + i) > 90) && (*(nome + i) < 97 || *(nome + i) > 122)) && *(nome + i) != 32)
 			return FORMATACAO_INVALIDA;
 
 	if (i == 0)
