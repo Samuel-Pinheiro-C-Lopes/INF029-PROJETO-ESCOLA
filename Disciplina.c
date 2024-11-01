@@ -166,8 +166,8 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						system("clear");
 						printf("\nENTRE COM A OPÇÃO:\n\n");
 						printf("0 - SAIR\n");
-						printf("1 - LISTAR POR EXTRAPOLAÇÃO\n");
-						printf("2 - LISTAR POR NÚMERO MÁXIMO  DE MATRÍCULA\n");
+						printf("1 - LISTAR POR EXTRAPOLAÇÃO [>]\n");
+						printf("2 - LISTAR POR NÚMERO MÁXIMO DE MATRÍCULAS [<]\n");
 						printf("3 - LISTAR TODOS\n");
 						printf("\nOpção: ");
 						ext_ler_int_f(&opt_alt, CASAS_INT_GERAL);
@@ -177,12 +177,12 @@ void main_disciplina (Disciplina** inicio_disciplina, Aluno** inicio_aluno, Prof
 						{
 							case (120):
 							{
-								listar_disciplinas_extr('<', inicio_disciplina);
+								listar_disciplinas_extr('>', inicio_disciplina);
 								break;
 							}
 							case (240):
 							{
-								listar_disciplinas_extr('>', inicio_disciplina);
+								listar_disciplinas_extr('<', inicio_disciplina);
 								break;
 							}
 							case (360):
