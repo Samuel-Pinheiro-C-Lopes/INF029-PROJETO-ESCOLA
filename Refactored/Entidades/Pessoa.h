@@ -13,10 +13,16 @@
 
     #pragma region Estrutura
 
+        // Condição de atividade da pessoa cadastrada
         #define ATIVO ('o')
         #define INATIVO ('x')
 
-        typedef struct pessoa Pessoa;
+        // Sexo da pessoa cadatrada
+        #define MASC ('M')
+        #define FEMI ('F')
+
+        // Estrutura opaca implementada em 'Pessoa.c'
+        typedef struct Pessoa Pessoa;
 
     #pragma endregion
 
@@ -50,9 +56,9 @@
 
     #pragma region Base
 
-        Pessoa* P_Constructor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char Funcao, char* Nome, int Idade, char Sexo);
+        Pessoa* P_Construtor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo);
 
-        Pessoa* P_Deconstructor(Pessoa* Pessoa);
+        Pessoa* P_Desconstrutor(Pessoa* Pessoa);
 
     #pragma endregion
 

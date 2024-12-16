@@ -1,4 +1,5 @@
 #include "Pessoa.h"
+#include <stdlib.h>
 
 #pragma region Pessoa
 
@@ -7,7 +8,7 @@
     #pragma region Estrutura
 
         // estrutura que representará uma pessoa
-        struct pessoa 
+        struct Pessoa 
         {
             char* Nome;
             char* Matricula;
@@ -283,6 +284,33 @@ struct c_pessoas
         *p_alvo = temp;
 
         Dim_Tamanho(colecao);
+    }
+
+#pragma endregion
+
+///////////////////////////////////
+
+#pragma region Base
+
+    Pessoa* P_Construtor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo)
+    {
+        Pessoa* P = (Pessoa*) malloc(sizeof(Pessoa));
+
+        P->Matricula = Matricula;
+        P->CPF = CPF;
+        P->Data_Nascimento = Data_Nascimento;
+        P->Nome = Nome;
+        P->Idade = Idade;
+        P->Sexo = Sexo;
+        P->Ativo = ATIVO;
+
+        return P;
+    }
+
+    Pessoa* P_Desconstructor(Pessoa* Pessoa)
+    {
+        free(Pessoa);
+        return NULL;
     }
 
 #pragma endregion
