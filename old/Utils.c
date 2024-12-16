@@ -422,8 +422,9 @@ int validar_data_mes (int mes)
 
 int validar_data_formatacao (char* data)
 {
+	int i;
 	char atual;
-	for (int i = 0; *(data + i) != '\0'; i++)
+	for (i = 0; *(data + i) != '\0'; i++)
 	{
 		atual = *(data + i);
 		if (i == 2 || i == 5)
@@ -434,6 +435,9 @@ int validar_data_formatacao (char* data)
 		else if (atual < 48 || atual > 57)
 			return FORMATACAO_VALIDA;
 	}
+
+	if (i < 10)
+		return FORMATACAO_INVALIDA;
 
 	return FORMATACAO_VALIDA;
 }

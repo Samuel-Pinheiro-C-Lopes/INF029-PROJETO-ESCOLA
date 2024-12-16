@@ -461,6 +461,8 @@ void professor_listar_por_substring (Professor** inicio_professor)
 	printf("\nEntre com a substring de busca: ");
 	ler_string_f(substring_busca, 50);
 
+	tornar_caixa_alta(substring_busca);
+
 	Professor* atual_professor = *inicio_professor;
 
 	while (atual_professor != NULL)
