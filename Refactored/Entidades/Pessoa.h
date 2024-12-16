@@ -9,6 +9,8 @@ typedef struct pessoa Pessoa;
 
 #pragma endregion
 
+///////////////////////////////////
+
 #pragma region Getters
 
 int Get_Idade(Pessoa* pessoa);
@@ -19,15 +21,19 @@ char* Get_CPF(Pessoa* pessoa);
 
 #pragma endregion
 
+///////////////////////////////////
+
 #pragma region Setters
 
 void Set_Idade(Pessoa* pessoa, int Idade);
-void Set_Matricula(Pessoa* pessoa, char Matricula[]);
-void Set_Data_Nascimento(Pessoa* pessoa, char Data_Nascimento[]);
+void Set_Matricula(Pessoa* pessoa, char Matricula[20]);
+void Set_Data_Nascimento(Pessoa* pessoa, char Data_Nascimento[9]);
 void Set_Sexo(Pessoa* pessoa, char Sexo);
-void Set_CPF(Pessoa* pessoa, char CPF[]);
+void Set_CPF(Pessoa* pessoa, char CPF[12]);
 
 #pragma endregion
+
+///////////////////////////////////
 
 #pragma region Base
 

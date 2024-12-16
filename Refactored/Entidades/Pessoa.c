@@ -71,7 +71,7 @@ void Set_Sexo(Pessoa* pessoa, char Sexo)
     pessoa->Sexo = Sexo;
 }
 
-void Set_CPF(Pessoa* pessoa, char CPF[])
+void Set_CPF(Pessoa* pessoa, char CPF[12])
 {
     pessoa->CPF = CPF;
 }
