@@ -4,6 +4,7 @@
 ///////////////////////////////////
 
 #include "../Utils/Dependencias.h"
+#include <string.h> // por conta da função memcpy (construtores)
 
 ///////////////////////////////////
 
@@ -35,32 +36,34 @@
         typedef char (*Get_Ativo_ptr) (Pessoa* pessoa);
         
         // Ponteiros para os setters de Pessoa
-        typedef int (*Set_Idade_ptr) (Pessoa* pessoa, int idade);
-        typedef char* (*Set_Nome_ptr) (Pessoa* pessoa, char* nome);
-        typedef char (*Set_Sexo_ptr) (Pessoa* pessoa, char sexo);
-        typedef char (*Set_Ativo_ptr) (Pessoa* pessoa, char ativo);
+        typedef void (*Set_Idade_ptr) (Pessoa* pessoa, int idade);
+        typedef void (*Set_Nome_ptr) (Pessoa* pessoa, char* nome);
+        typedef void (*Set_Sexo_ptr) (Pessoa* pessoa, char sexo);
+        typedef void (*Set_Ativo_ptr) (Pessoa* pessoa, char ativo);
 
         // implementação pública de Pessoa
         struct pessoa 
         {
             // getters
-            Get_Idade_ptr Get_Idade;
-            Get_Nome_ptr Get_Nome;
-            Get_Matricula_ptr Get_Matricula;
-            Get_Data_Nascimento_ptr Get_Data_Nascimento;
-            Get_Sexo_ptr Get_Sexo;
-            Get_CPF_ptr Get_CPF;
-            Get_Ativo_ptr Get_Ativo;
+            Get_Idade_ptr const Get_Idade;
+            Get_Nome_ptr const Get_Nome;
+            Get_Matricula_ptr const Get_Matricula;
+            Get_Data_Nascimento_ptr const Get_Data_Nascimento;
+            Get_Sexo_ptr const Get_Sexo;
+            Get_CPF_ptr const Get_CPF;
+            Get_Ativo_ptr const Get_Ativo;
             
             // setters
-            Set_Idade_ptr Set_Idade;
-            Set_Nome_ptr Set_Nome;
-            Set_Sexo_ptr Set_Sexo;
-            Set_Ativo_ptr Set_Ativo;
+            Set_Idade_ptr const Set_Idade;
+            Set_Nome_ptr const Set_Nome;
+            Set_Sexo_ptr const Set_Sexo;
+            Set_Ativo_ptr const Set_Ativo;
 
             // privado
-            _Pessoa* _Pessoa;
+            _Pessoa* const _Pessoa; 
         };
+        // nota: uso de const para não permitir alteração nos ponteiros
+        // uma vez que sejam designados pelo construtor
 
     #pragma endregion
         
@@ -83,13 +86,13 @@
         typedef char (*Get_Ativo_ptr) (Pessoa* pessoa);
 
         // Funções fonte
-        static int Get_Idade(Pessoa* pessoa);
+        static int Get_Idade(Pessoa* const pessoa);
         static char* Get_Nome(Pessoa* pessoa);
         static char* Get_Matricula(Pessoa* pessoa);
         static char* Get_Data_Nascimento(Pessoa* pessoa);
         static char Get_Sexo(Pessoa* pessoa);
         static char* Get_CPF(Pessoa* pessoa);
-        static char Get_Ativo(Pessoa* pessoa);
+        static char Get_Ativo(Pessoa* const pessoa);
 
     #pragma endregion
 
