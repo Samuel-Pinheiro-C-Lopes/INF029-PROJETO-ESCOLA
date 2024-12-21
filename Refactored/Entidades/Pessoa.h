@@ -22,7 +22,50 @@
         #define FEMI ('F')
 
         // Estrutura opaca implementada em 'Pessoa.c'
-        typedef struct Pessoa Pessoa;
+        typedef struct pessoa Pessoa; // público
+        typedef struct _pessoa _Pessoa; // privado
+
+        // Ponteiros para os getters de Pessoa
+        typedef int (*Get_Idade_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Nome_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Matricula_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Data_Nascimento_ptr) (Pessoa* pessoa);
+        typedef char (*Get_Sexo_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_CPF_ptr) (Pessoa* pessoa);
+        typedef char (*Get_Ativo_ptr) (Pessoa* pessoa);
+        
+        // Ponteiros para os setters de Pessoa
+        typedef int (*Set_Idade_ptr) (Pessoa* pessoa, int idade);
+        typedef char* (*Set_Nome_ptr) (Pessoa* pessoa, char* nome);
+        typedef char (*Set_Sexo_ptr) (Pessoa* pessoa, char sexo);
+        typedef char (*Set_Ativo_ptr) (Pessoa* pessoa, char ativo);
+
+        // implementação pública de Pessoa
+        struct pessoa 
+        {
+            // getters
+            Get_Idade_ptr Get_Idade;
+            Get_Nome_ptr Get_Nome;
+            Get_Matricula_ptr Get_Matricula;
+            Get_Data_Nascimento_ptr Get_Data_Nascimento;
+            Get_Sexo_ptr Get_Sexo;
+            Get_CPF_ptr Get_CPF;
+            Get_Ativo_ptr Get_Ativo;
+            
+            // setters
+            Set_Idade_ptr Set_Idade;
+            Set_Nome_ptr Set_Nome;
+            Set_Sexo_ptr Set_Sexo;
+            Set_Ativo_ptr Set_Ativo;
+
+            // privado
+            _Pessoa* _Pessoa;
+        };
+
+    #pragma endregion
+        
+    #pragma region Métodos
+        
 
     #pragma endregion
 
@@ -30,27 +73,38 @@
 
     #pragma region Getters
 
-        int Get_Idade(Pessoa* pessoa);
-        char* Get_Nome(Pessoa* pessoa);
-        char* Get_Matricula(Pessoa* pessoa);
-        char* Get_Data_Nascimento(Pessoa* pessoa);
-        char Get_Sexo(Pessoa* pessoa);
-        char* Get_CPF(Pessoa* pessoa);
-        char Get_Ativo(Pessoa* pessoa);
+        // Métodos
+        typedef int (*Get_Idade_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Nome_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Matricula_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_Data_Nascimento_ptr) (Pessoa* pessoa);
+        typedef char (*Get_Sexo_ptr) (Pessoa* pessoa);
+        typedef char* (*Get_CPF_ptr) (Pessoa* pessoa);
+        typedef char (*Get_Ativo_ptr) (Pessoa* pessoa);
+
+        // Funções fonte
+        static int Get_Idade(Pessoa* pessoa);
+        static char* Get_Nome(Pessoa* pessoa);
+        static char* Get_Matricula(Pessoa* pessoa);
+        static char* Get_Data_Nascimento(Pessoa* pessoa);
+        static char Get_Sexo(Pessoa* pessoa);
+        static char* Get_CPF(Pessoa* pessoa);
+        static char Get_Ativo(Pessoa* pessoa);
 
     #pragma endregion
 
     ///////////////////////////////////
 
     #pragma region Setters
-
-        void Set_Idade(Pessoa* pessoa, int Idade);
-        void Set_Nome(Pessoa* pessoa, char* Nome);
+        
+        // Funções fonte
+        static void Set_Idade(Pessoa* pessoa, int idade);
+        static void Set_Nome(Pessoa* pessoa, char* nome);
         // void Set_Matricula(Pessoa* pessoa, char Matricula[20]);
         // void Set_Data_Nascimento(Pessoa* pessoa, char Data_Nascimento[9]);
-        void Set_Sexo(Pessoa* pessoa, char Sexo);
+        static void Set_Sexo(Pessoa* pessoa, char sexo);
         //void Set_CPF(Pessoa* pessoa, char CPF[12]);
-        void Set_Ativo(Pessoa* pessoa, char Ativo);
+        static void Set_Ativo(Pessoa* pessoa, char ativo);
 
     #pragma endregion
 
@@ -58,9 +112,9 @@
 
     #pragma region Base
 
-        Pessoa* P_Construtor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo);
+        Pessoa* __P_Construtor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo);
 
-        Pessoa* P_Desconstrutor(Pessoa* Pessoa);
+        Pessoa* __P_Desconstrutor(Pessoa* Pessoa);
 
     #pragma endregion
 
