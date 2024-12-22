@@ -13,6 +13,8 @@
     typedef void (*Red_Limite_ptr) (C_Pessoas* const colecao);
     typedef void (*Exp_Limite_ptr) (C_Pessoas* const colecao);
     typedef int (*Get_Limite_ptr) (const C_Pessoas* const colecao);
+    typedef Pessoa** (*C_Realloc_ptr) (C_Pessoas* const colecao);
+    typedef void (*Inicializador_Nulo_ptr) (C_Pessoas* const colecao);
 
     // Estrutura que representa os membros privados da coleção
     struct _c_pessoas
@@ -21,6 +23,8 @@
         Red_Limite_ptr Red_Limite;
         Exp_Limite_ptr Exp_Limite;
         Get_Limite_ptr Get_Limite;
+        C_Realloc_ptr C_Realloc;
+        Inicializador_Nulo_ptr Inicializador_Nulo;
 
         // propriedades privadas
         Pessoa** pessoas;
@@ -60,6 +64,7 @@
         // Privado
         static void Exp_Limite(C_Pessoas* const colecao);
         static void Red_Limite(C_Pessoas* const colecao);
+        static Pessoa** C_Realloc(C_Pessoas* const colecao);
 
     #pragma endregion
     
@@ -135,6 +140,15 @@
     // Retorno: vazio
     static void Adc_Pessoa(C_Pessoas* const colecao, Pessoa* const pessoa)
     {
+        // caso tenha alcançado o limite, o expande, realoca o vetor de pessoas e
+        // inicializa pessoas alocadas à frente
+        if (colecao->Get_Tamanho(colecao) == colecao->_C_Pessoas->Get_Limite(colecao))
+        {
+            colecao->_C_Pessoas->Exp_Limite(colecao);
+            colecao->_C_Pessoas->pessoas = colecao->_C_Pessoas->C_Realloc(colecao);
+            colecao->_C_Pessoas->Inicializador_Nulo(colecao);
+        }
+
         colecao->_C_Pessoas->pessoas[colecao->_C_Pessoas->Tamanho] = pessoa;
         Adc_Tamanho(colecao);
     }
@@ -195,6 +209,18 @@
         colecao->_C_Pessoas->Limite /= 2;
     }
 
+    static Pessoa** C_Realloc(C_Pessoas* const colecao)
+    {
+        return realloc(colecao->_C_Pessoas->pessoas, 
+            sizeof(Pessoa*) * colecao->_C_Pessoas->Get_Limite(colecao));
+    }
+
+    static void Inicializador_Nulo (C_Pessoas* const colecao)
+    {
+        for (int i = colecao->Get_Tamanho(colecao); i < colecao->_C_Pessoas->Get_Limite(colecao); i++)
+            colecao->_C_Pessoas->pessoas[i] = NULL;
+    }
+
     static void Limp_Pessoas(C_Pessoas* const colecao)
     {
         int i, j; // contadores
@@ -240,7 +266,13 @@
             }
         } 
         
-        // coleção limpa dos inativos 
+        // 3° etapa: verifica o tamanho atual para realocar com base nele
+        while (colecao->Get_Tamanho(colecao) < colecao->_C_Pessoas->Get_Limite(colecao) / 2)
+            colecao->_C_Pessoas->Red_Limite(colecao);
+        
+        colecao->_C_Pessoas->C_Realloc(colecao);
+        
+        // coleção limpa dos inativos e realocada de acordo 
     }
 
 #pragma endregion
@@ -281,6 +313,8 @@
             .Get_Limite = Get_Limite,
             .Exp_Limite = Exp_Limite,
             .Red_Limite = Red_Limite,
+            .C_Realloc = C_Realloc,
+            .Inicializador_Nulo = Inicializador_Nulo,
         };
         
         // copia endereço para novo membro privado
