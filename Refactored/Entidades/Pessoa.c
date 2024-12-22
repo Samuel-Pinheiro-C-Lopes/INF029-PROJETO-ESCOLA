@@ -20,6 +20,49 @@
 
     #pragma endregion
 
+    ///////////////////////////////////
+    
+    #pragma region HEADER
+
+        ///////////////////////////////////
+
+        #pragma region Getters 
+
+            static int Get_Idade(const Pessoa* const pessoa);
+            static char* Get_Nome(const Pessoa* const pessoa);
+            static char* Get_Matricula(const Pessoa* const pessoa);
+            static char* Get_Data_Nascimento(const Pessoa* const pessoa);
+            static char Get_Sexo(const Pessoa* const pessoa);
+            static char* Get_CPF(const Pessoa* const pessoa);
+            static char Get_Ativo(const Pessoa* const pessoa);
+
+        #pragma endregion
+
+        ///////////////////////////////////
+
+        #pragma region Setters
+
+            static void Set_Idade(Pessoa* const pessoa, int const idade);
+            static void Set_Nome(Pessoa* const pessoa, char* const nome);
+            // void Set_Matricula(Pessoa* pessoa, char Matricula[20]);
+            // void Set_Data_Nascimento(Pessoa* pessoa, char Data_Nascimento[9]);
+            static void Set_Sexo(Pessoa* const pessoa, char const sexo);
+            //void Set_CPF(Pessoa* pessoa, char CPF[12]);
+            static void Set_Ativo(Pessoa* const pessoa, char const ativo);
+
+        #pragma endregion
+
+        ///////////////////////////////////
+        
+        #pragma region Base
+
+            static Pessoa* P_Desconstrutor(Pessoa* Pessoa);
+
+        #pragma endregion
+        
+        ///////////////////////////////////
+
+    #pragma endregion
 
 
     ///////////////////////////////////
@@ -29,45 +72,47 @@
         // Obtém propriedades encapsuladas de pessoa
         // Parâmetros: endereço da pessoa alvo da obtenção
         // Retorno: tipo de dado requerido
+        // Const: tanto o ponteiro quanto estrutura devem permanecer iguais
+        // durante o tempo de execução dos getters
 
         // obtém a propriedade "idade"
-        static int Get_Idade(Pessoa* const pessoa)
+        static int Get_Idade(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Idade;
         }
 
         // obtém a propriedade "nome"
-        static char* Get_Nome(Pessoa* const pessoa)
+        static char* Get_Nome(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Nome;
         }
 
         // obtém a propriedade "matrícula"
-        char* Get_Matricula(Pessoa* const pessoa)
+        static char* Get_Matricula(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Matricula;
         }
 
         // obtém a propriedade "data de nascimento"
-        char* Get_Data_Nascimento(Pessoa* const pessoa)
+        static char* Get_Data_Nascimento(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Data_Nascimento;
         }
 
         // obtém a propriedade "sexo"
-        char Get_Sexo(Pessoa* const pessoa)
+        static char Get_Sexo(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Sexo;
         }
 
         // obtém a propriedade "cpf"
-        char* Get_CPF(Pessoa* const pessoa)
+        static char* Get_CPF(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->CPF;
         }
 
         // obtém a propriedade "ativo"
-        static char Get_Ativo(Pessoa* const pessoa)
+        static char Get_Ativo(const Pessoa* const pessoa)
         {
             return pessoa->_Pessoa->Ativo;
         }
@@ -81,29 +126,31 @@
         // Definem propriedades encapsuladas de pessoa
         // Parâmetros: endereço da pessoa alvo da definição e novo valor para a propriedade
         // Retorno: vazio
+        // Const: A estrutura mudará dentro de seu escopo, entretanto o ponteiro e valor de entrada
+        // devem persistir durante seu tempo de execução
 
         // define a propriedade "nome"
-        static void Set_Nome(Pessoa* pessoa, char* Nome)
+        static void Set_Nome(Pessoa* const pessoa, char* const nome)
         {
-            pessoa->_Pessoa->Nome = Nome;
+            pessoa->_Pessoa->Nome = nome;
         }
 
         // define a propriedade "idade"
-        static void Set_Idade(Pessoa* pessoa, int Idade)
+        static void Set_Idade(Pessoa* const pessoa, int const idade)
         {
-            pessoa->_Pessoa->Idade = Idade;
+            pessoa->_Pessoa->Idade = idade;
         }
 
         // define a propriedade "sexo"
-        void Set_Sexo(Pessoa* pessoa, char Sexo)
+        static void Set_Sexo(Pessoa* const pessoa, char const sexo)
         {
-            pessoa->_Pessoa->Sexo = Sexo;
+            pessoa->_Pessoa->Sexo = sexo;
         }
 
         // define a propriedade "ativo"
-        static void Set_Ativo(Pessoa *pessoa, char Ativo)
+        static void Set_Ativo(Pessoa* const pessoa, char const ativo)
         {
-            pessoa->_Pessoa->Ativo = Ativo;
+            pessoa->_Pessoa->Ativo = ativo;
         }
 
         /*
@@ -139,7 +186,7 @@
         // Construtor e desconstrutor
 
         // Cria pessoa, atribui suas propriedades e retorna o seu ponteiro
-        Pessoa* P_Constructor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo)
+        Pessoa* P_Construtor (char Matricula[20], char CPF[12], char Data_Nascimento[9], char* Nome, int Idade, char Sexo)
         {
             // Notas sobre esta abordagem no final deste documento...
             
@@ -160,12 +207,15 @@
                 Set_Nome,
                 Set_Sexo,
                 Set_Ativo,
+                // desconstrutor
+                P_Desconstrutor,
                 // membro privado
                 &stc_p
             };            
             
             // alocação
             Pessoa* P = (Pessoa*) malloc(sizeof(Pessoa));
+            
             // passa modelo para nova Pessoa alocada
             memcpy(P, &stc_P, sizeof(Pessoa));
             
@@ -182,7 +232,7 @@
         }
 
         // Libera pessoa, desalocando espaço de memória especificado
-        Pessoa* P_Deconstructor (Pessoa* pessoa)
+        static Pessoa* P_Desconstrutor (Pessoa* pessoa)
         {
             free(pessoa->_Pessoa); // libera ponteiro para membros privados
             free(pessoa); // libera membros públicos
