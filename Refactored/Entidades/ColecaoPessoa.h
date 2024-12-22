@@ -26,7 +26,6 @@
         // getters
         typedef char (*__Get_Funcao_ptr) (const C_Pessoas* const colecao);
         typedef int (*__Get_Tamanho_ptr) (const C_Pessoas* const colecao);
-        typedef int (*__Get_Limite_ptr) (const C_Pessoas* const colecao);
 
         // CRUD
         typedef void (*__Adc_Tamanho_ptr) (C_Pessoas* const colecao);
@@ -45,7 +44,6 @@
             // getters
             __Get_Funcao_ptr const Get_Funcao;
             __Get_Tamanho_ptr const Get_Tamanho;
-            __Get_Limite_ptr const Get_Limite;
             
             // CRUD
             __Adc_Tamanho_ptr const  Adc_Tamanho;

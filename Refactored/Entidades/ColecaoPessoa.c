@@ -1,5 +1,5 @@
 #include "ColecaoPessoa.h"
-#include <string.h>
+#include "Pessoa.h"
 
 ///////////////////////////////////
 
@@ -9,14 +9,25 @@
 
 #pragma region Estrutura
 
-// Estrutura que representa a coleção
-struct _c_pessoas
-{
-    Pessoa** pessoas;
-    char Funcao;
-    int Tamanho;
-    int Limite;
-};
+    // ponteiro para os métodos privados
+    typedef void (*Red_Limite_ptr) (C_Pessoas* const colecao);
+    typedef void (*Exp_Limite_ptr) (C_Pessoas* const colecao);
+    typedef int (*Get_Limite_ptr) (const C_Pessoas* const colecao);
+
+    // Estrutura que representa os membros privados da coleção
+    struct _c_pessoas
+    {
+        // métodos privados
+        Red_Limite_ptr Red_Limite;
+        Exp_Limite_ptr Exp_Limite;
+        Get_Limite_ptr Get_Limite;
+
+        // propriedades privadas
+        Pessoa** pessoas;
+        char Funcao;
+        int Tamanho;
+        int Limite;
+    };
 
 #pragma endregion
 
@@ -27,9 +38,11 @@ struct _c_pessoas
     ///////////////////////////////////
 
     #pragma region Getters
-
+        // Público
         static char Get_Funcao(const C_Pessoas* const colecao);
         static int Get_Tamanho(const C_Pessoas* const colecao);
+        // Privado
+        // Limite só terá utilidade dentro do escopo da coleção
         static int Get_Limite(const C_Pessoas* const colecao);
 
     #pragma endregion
@@ -37,13 +50,16 @@ struct _c_pessoas
     ///////////////////////////////////
 
     #pragma region CRUD
-
+        // Público
         static void Adc_Tamanho(C_Pessoas* const colecao);
         static void Dim_Tamanho(C_Pessoas* const colecao);
         static void Adc_Pessoa(C_Pessoas* const colecao, Pessoa* const pessoa);
         static void Alt_Pessoa(C_Pessoas* const colecao, Pessoa* const pessoa);
         static Pessoa* Busc_Pessoa(C_Pessoas* const colecao, char* const Matricula);
         static void Rem_Pessoa(C_Pessoas* const colecao, char* const Matricula);
+        // Privado
+        static void Exp_Limite(C_Pessoas* const colecao);
+        static void Red_Limite(C_Pessoas* const colecao);
 
     #pragma endregion
     
@@ -168,6 +184,65 @@ struct _c_pessoas
         p_alvo->Set_Ativo(p_alvo, INATIVO);
     }
 
+    static void Exp_Limite(C_Pessoas* const colecao)
+    {
+        colecao->_C_Pessoas->Limite *= 2;
+        //colecao->
+    }
+
+    static void Red_Limite(C_Pessoas* const colecao)
+    {
+        colecao->_C_Pessoas->Limite /= 2;
+    }
+
+    static void Limp_Pessoas(C_Pessoas* const colecao)
+    {
+        int i, j; // contadores
+        Pessoa* p_atual; // apontará para o atual
+
+        // 1° etapa: liberar pessoas inativas e tornar seus ponteiros nulos
+        // itera a lista
+        for (i = 0; i < colecao->Get_Tamanho(colecao); i++)
+        {
+            // indexa o atual
+            p_atual = colecao->_C_Pessoas->pessoas[i];
+
+            // se estiver inativo...
+            if (p_atual->Get_Ativo(p_atual) == INATIVO)
+            {
+                // libera
+                free(p_atual);
+                // coleção naquela posição aponta para nulo
+                colecao->_C_Pessoas->pessoas[i] = NULL; 
+            }
+        }
+        
+        // 2° etapa: atualiza o tamanho enviando todos os ponteiros liberados para o final
+        // itera a lista
+        for (i = 0; i < colecao->Get_Tamanho(colecao); i++)
+        {
+            // indexa o atual
+            p_atual = colecao->_C_Pessoas->pessoas[i];
+            
+            // enquanto o atual for nulo...
+            while (p_atual == NULL)
+            {
+                // unshift
+                for (j = i; j < colecao->Get_Tamanho(colecao) - 1; j++)
+                   colecao->_C_Pessoas->pessoas[j] = colecao->_C_Pessoas->pessoas[j + 1]; 
+                
+                // reduz o tamanho
+                colecao->Dim_Tamanho(colecao);
+
+                // se o tamanho for igual à posição indexadora, finalize
+                if (colecao->Get_Tamanho(colecao) <= i)
+                    break;
+            }
+        } 
+        
+        // coleção limpa dos inativos 
+    }
+
 #pragma endregion
 
 ///////////////////////////////////
@@ -184,7 +259,6 @@ struct _c_pessoas
             // Getters
             Get_Funcao,
             Get_Tamanho,
-            Get_Limite,
             // CRUD
             Adc_Tamanho,
             Dim_Tamanho,
@@ -196,6 +270,39 @@ struct _c_pessoas
             PC_Desconstrutor,
         };
 
+        // tentativa de implementar métodos privados...
+        
+        static _C_Pessoas stc_pv = (_C_Pessoas)
+        {
+            // propriedades privadas
+            .Tamanho = 0,
+            .Limite = MAX_INI,
+            // métodos privados
+            .Get_Limite = Get_Limite,
+            .Exp_Limite = Exp_Limite,
+            .Red_Limite = Red_Limite,
+        };
+        
+        // copia endereço para novo membro privado
+        _C_Pessoas* pv = (_C_Pessoas*) malloc(sizeof(_C_Pessoas));
+        memcpy(pv, &stc_pv, sizeof(_C_Pessoas));
+        
+        // certifica-se de que o modelo estático irá prover o novo espaço alocado
+        // para os membros privados - 'pv', neste caso
+        *(_C_Pessoas**)&stc_colecao._C_Pessoas = NULL;
+        if (!stc_colecao._C_Pessoas)
+            *(_C_Pessoas**)&stc_colecao._C_Pessoas = pv;
+        
+        // aloca a nova coleção, copiando o conteúdo da coleção modelo,
+        // que agora tem também o modelo dos membros privados
+        C_Pessoas* colecao = (C_Pessoas*) malloc(sizeof(C_Pessoas));
+        memcpy(colecao, &stc_colecao, sizeof(C_Pessoas));
+
+        // designa o que resta
+        colecao->_C_Pessoas->pessoas = (Pessoa**) malloc(sizeof(Pessoa*) * colecao->_C_Pessoas->Limite);
+        colecao->_C_Pessoas->Funcao = Funcao;
+
+        /*
         *(_C_Pessoas**)&stc_colecao._C_Pessoas = NULL;
         if (!stc_colecao._C_Pessoas)
             *(_C_Pessoas**)&stc_colecao._C_Pessoas = (_C_Pessoas*) malloc(sizeof(_C_Pessoas));        
@@ -207,7 +314,9 @@ struct _c_pessoas
         colecao->_C_Pessoas->Tamanho = 0;
         colecao->_C_Pessoas->Limite = MAX_INI;
         colecao->_C_Pessoas->pessoas = (Pessoa**) malloc(sizeof(Pessoa*) * colecao->_C_Pessoas->Limite);
-        
+        */
+
+        // designa inicialmente como nulo todos os ponteiros de pessoa na coleção
         for (int i = 0; i < colecao->_C_Pessoas->Limite; i++)
             colecao->_C_Pessoas->pessoas[i] = NULL;
         
@@ -219,6 +328,7 @@ struct _c_pessoas
     {
         // libera todas as pessoas na coleção
         for (int i = 0; i < colecao->_C_Pessoas->Tamanho; i++)
+            //  ativa o desconstrutor de cada pessoa na coleção
             colecao->_C_Pessoas->pessoas[i]->Desconstrutor(colecao->_C_Pessoas->pessoas[i]);
         
         // libera a coleção

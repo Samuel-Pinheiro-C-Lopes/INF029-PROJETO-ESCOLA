@@ -6,7 +6,7 @@
 
     #pragma region Estrutura
 
-        // estrutura que representará uma pessoa
+        // estrutura que representará os membros privados de uma pessoa
         struct _pessoa 
         {
             char* Nome;
