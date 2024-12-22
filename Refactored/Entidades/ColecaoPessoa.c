@@ -179,8 +179,7 @@ struct _c_pessoas
     { 
         // mesma abordagem adotada para o C_Construtor, notas compartilhadas
         // modelos para a criação de uma coleção de pessoas
-        static _C_Pessoas _colecao_stc;
-        static C_Pessoas colecao_stc = (C_Pessoas)
+        static C_Pessoas stc_colecao = (C_Pessoas)
         {
             // Getters
             Get_Funcao,
@@ -195,12 +194,14 @@ struct _c_pessoas
             Rem_Pessoa,
             // desconstrutor
             PC_Desconstrutor,
-            // membros privados
-            &_colecao_stc
         };
 
+        *(_C_Pessoas**)&stc_colecao._C_Pessoas = NULL;
+        if (!stc_colecao._C_Pessoas)
+            *(_C_Pessoas**)&stc_colecao._C_Pessoas = (_C_Pessoas*) malloc(sizeof(_C_Pessoas));        
+
         C_Pessoas* colecao = (C_Pessoas*) malloc(sizeof(C_Pessoas));
-        memcpy(colecao, &colecao_stc, sizeof(C_Pessoas));
+        memcpy(colecao, &stc_colecao, sizeof(C_Pessoas));
 
         colecao->_C_Pessoas->Funcao = Funcao;
         colecao->_C_Pessoas->Tamanho = 0;

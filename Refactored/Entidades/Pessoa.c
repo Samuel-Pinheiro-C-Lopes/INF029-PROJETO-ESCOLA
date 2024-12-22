@@ -191,7 +191,16 @@
             // Notas sobre esta abordagem no final deste documento...
             
             // membros estáticos que servem como modelo para novas instâncias
-            static _Pessoa stc_p;
+            // ATUALMENTE TODAS AS PESSOAS TEM _PESSOA APONTANDO PARA STC_P
+            // separar métodos em outra struct 
+            static _Pessoa* stc_p = NULL;
+            
+            if (!stc_p)
+            {
+
+                stc_p = (_Pessoa*) malloc(sizeof(_Pessoa));
+            }
+
             static Pessoa stc_P = (Pessoa)
             {
                 // getters
@@ -209,10 +218,16 @@
                 Set_Ativo,
                 // desconstrutor
                 P_Desconstrutor,
-                // membro privado
-                &stc_p
-            };            
-            
+            };       
+
+            // membro privado
+            *(_Pessoa**)&stc_P._Pessoa = NULL; // cast 'const aside' para tornar nulo 
+            if (!stc_P._Pessoa)
+            {
+                // cast 'const aside' para alocar
+                *(_Pessoa**)&stc_P._Pessoa = (_Pessoa*) malloc(sizeof(_Pessoa));
+            }
+
             // alocação
             Pessoa* P = (Pessoa*) malloc(sizeof(Pessoa));
             
@@ -234,7 +249,7 @@
         // Libera pessoa, desalocando espaço de memória especificado
         static Pessoa* P_Desconstrutor (Pessoa* pessoa)
         {
-            free(pessoa->_Pessoa); // libera ponteiro para membros privados
+            //free(pessoa->_Pessoa); // libera ponteiro para membros privados
             free(pessoa); // libera membros públicos
             return NULL;
         }
