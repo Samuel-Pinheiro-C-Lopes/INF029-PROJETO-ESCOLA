@@ -249,7 +249,7 @@
         // Libera pessoa, desalocando espaço de memória especificado
         static Pessoa* P_Desconstrutor (Pessoa* pessoa)
         {
-            //free(pessoa->_Pessoa); // libera ponteiro para membros privados
+            free(pessoa->_Pessoa); // libera ponteiro para membros privados
             free(pessoa); // libera membros públicos
             return NULL;
         }
