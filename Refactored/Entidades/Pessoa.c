@@ -193,13 +193,6 @@
             // membros estáticos que servem como modelo para novas instâncias
             // ATUALMENTE TODAS AS PESSOAS TEM _PESSOA APONTANDO PARA STC_P
             // separar métodos em outra struct 
-            static _Pessoa* stc_p = NULL;
-            
-            if (!stc_p)
-            {
-
-                stc_p = (_Pessoa*) malloc(sizeof(_Pessoa));
-            }
 
             static Pessoa stc_P = (Pessoa)
             {
@@ -264,6 +257,20 @@
 // Notas sobre abordagem do construtor de pessoa:
 //
     /*
+
+     Nota: 
+        acabei optando por uma junção dos dois métodos pela seguinte premissa:
+        seria custoso declarar e atribuir toda vez com o construtor, entretanto
+        o ponteiro de _Pessoa faz necessária a alocação de memória para cada construção.
+        se verifica o tipo atual para realizar alteração e, depois disso, ignora-se
+        temporariamente o tipo qualificado constante de _Pessoa a fim de alocar 
+        um espaço diferente para esse tipo estático
+        Não parece ser uma forma muito limpa e concisa de obter o resultado, mas funciona
+        e os membros possuem mutabilidade e encapsulamento esperado no cliente, sendo
+        computacionalmente melhor do que declarar e atribuir toda vez que construir pessoa,
+        uma vez que a maior parte dos campos e a própria estrutura é declarada de forma estática
+
+
 
     Essas são duas formas de definir os campos constantes uma vez que malloc tecnicamente
     já o faz, apesar de com lixo - assim não tendo como inicializar apropriadamente.
