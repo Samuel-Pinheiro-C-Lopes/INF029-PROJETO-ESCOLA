@@ -21,4 +21,12 @@
 
 ///////////////////////////////////
 
+#pragma region COMPARAÇÃO
+
+    int Comparar_Strs(const char* const str1, const char* const str2);
+
+#pragma endregion
+
+///////////////////////////////////
+
 #endif
